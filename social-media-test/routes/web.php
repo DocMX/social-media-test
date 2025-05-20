@@ -9,10 +9,6 @@ use Inertia\Inertia;
 Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     // En routes/web.php
     Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
