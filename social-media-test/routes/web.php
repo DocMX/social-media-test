@@ -8,10 +8,10 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/u/{user:username}', [ProfileController::class, 'index'])
+    ->name('profile');
 
 Route::middleware('auth')->group(function () {
-    // En routes/web.php
-    Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
