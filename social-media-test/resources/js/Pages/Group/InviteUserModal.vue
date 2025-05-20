@@ -11,7 +11,6 @@ import {
 import {useForm, usePage} from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
 import Checkbox from "@/Components/Checkbox.vue";
-import InputTextarea from "@/Components/InputTextarea.vue";
 import axiosClient from "@/axiosClient.js";
 import BaseModal from "@/Components/app/BaseModal.vue";
 
