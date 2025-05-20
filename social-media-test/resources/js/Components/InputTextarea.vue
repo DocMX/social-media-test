@@ -1,45 +1,59 @@
-<template>
-  <div>
-    <label v-if="label" :for="id" class="block mb-1 font-medium text-gray-700">
-      {{ label }}
-    </label>
-    <textarea
-      :id="id"
-      :name="name"
-      :rows="rows"
-      :placeholder="placeholder"
-      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-      :class="inputClass"
-      v-model="modelValueLocal"
-    ></textarea>
-    <p v-if="error" class="text-sm text-red-600 mt-1">{{ error }}</p>
-  </div>
-</template>
-
 <script setup>
-import { computed } from 'vue'
+import {onMounted, ref, watch} from 'vue';
 
 const props = defineProps({
-  modelValue: String,
-  label: String,
-  name: String,
-  id: String,
-  rows: {
-    type: Number,
-    default: 4,
-  },
-  placeholder: String,
-  error: String,
-  inputClass: {
-    type: String,
-    default: '',
-  },
+    modelValue: {
+        type: String,
+        required: false,
+    },
+    placeholder: String,
+    autoResize: {
+        type: Boolean,
+        default: true
+    }
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const input = ref(null);
+
+onMounted(() => {
+    if (input.value.hasAttribute('autofocus')) {
+        input.value.focus();
+    }
+});
+
+watch(() => props.modelValue, () => {
+    console.log("Changed")
+    setTimeout(() => {
+        adjustHeight()
+    }, 10)
 })
 
-const emit = defineEmits(['update:modelValue'])
+defineExpose({focus: () => input.value.focus()});
 
-const modelValueLocal = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val),
+function onInputChange($event) {
+    emit('update:modelValue', $event.target.value)
+}
+
+function adjustHeight() {
+    if (props.autoResize) {
+        input.value.style.height = 'auto';
+        input.value.style.height = (input.value.scrollHeight + 1) + 'px';
+    }
+}
+
+onMounted(() => {
+    adjustHeight()
 })
 </script>
+
+<template>
+    <textarea
+        class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+        :value="modelValue"
+        @input="onInputChange"
+        ref="input"
+        :placeholder="placeholder"
+    ></textarea>
+</template>
