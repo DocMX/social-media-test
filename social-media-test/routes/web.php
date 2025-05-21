@@ -13,14 +13,14 @@ Route::get('/u/{user:username}', [ProfileController::class, 'index'])
     ->name('profile');
 
 Route::middleware('auth')->group(function () {
-     // Posts
+    // Posts
     Route::prefix('/post')->group(function () {
         Route::get('/{post}', [PostController::class, 'view'])
             ->name('post.view');
 
         Route::post('', [PostController::class, 'store'])
             ->name('post.create');
-            
+
         Route::put('/{post}', [PostController::class, 'update'])
             ->name('post.update');
 
@@ -33,7 +33,28 @@ Route::middleware('auth')->group(function () {
         Route::post('/{post}/reaction', [PostController::class, 'postReaction'])
             ->name('post.reaction');
 
+        Route::post('/{post}/comment', [PostController::class, 'createComment'])
+            ->name('post.comment.create');
+
+        Route::post('/ai-post', [PostController::class, 'aiPostContent'])
+            ->name('post.aiContent');
+
+        Route::post('/fetch-url-preview', [PostController::class, 'fetchUrlPreview'])
+            ->name('post.fetchUrlPreview');
+
+        Route::post('/{post}/pin', [PostController::class, 'pinUnpin'])
+            ->name('post.pinUnpin');
     });
+
+    // Comments
+    Route::delete('/comment/{comment}', [PostController::class, 'deleteComment'])
+        ->name('comment.delete');
+
+    Route::put('/comment/{comment}', [PostController::class, 'updateComment'])
+        ->name('comment.update');
+
+    Route::post('/comment/{comment}/reaction', [PostController::class, 'commentReaction'])
+        ->name('comment.reaction');
 
     //Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -42,4 +63,4 @@ Route::middleware('auth')->group(function () {
         ->name('profile.updateImages');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
