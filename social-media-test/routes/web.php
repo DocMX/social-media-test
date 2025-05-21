@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\SearchController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/update-images', [ProfileController::class, 'updateImage'])
         ->name('profile.updateImages');
+
+     Route::get('/search/{search?}', [SearchController::class, 'search'])
+        ->name('search');
 });
 
 require __DIR__ . '/auth.php';
