@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Foundation\Application;
@@ -10,10 +11,26 @@ use App\Http\Controllers\SearchController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])
     ->name('profile');
 
+Route::get('/g/{group:slug}', [GroupController::class, 'profile'])
+    ->name('group.profile');
+
 Route::middleware('auth')->group(function () {
+
+    // Groups
+    Route::prefix('/group')->group(function () {
+
+        Route::post('/', [GroupController::class, 'store'])
+            ->name('group.create');
+
+        Route::put('/{group:slug}', [GroupController::class, 'update'])
+            ->name('group.update');
+
+    });
+
     // Posts
     Route::prefix('/post')->group(function () {
         Route::get('/{post}', [PostController::class, 'view'])
