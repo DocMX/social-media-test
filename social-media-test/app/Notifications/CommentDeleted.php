@@ -2,10 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Models\Comment;
+use App\Models\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class CommentDeleted extends Notification
 {
@@ -14,7 +17,7 @@ class CommentDeleted extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public Comment $comment, public Post $post)
     {
         //
     }
@@ -35,8 +38,9 @@ class CommentDeleted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->line('You comment "'.Str::words($this->comment->comment, 5)
+                        .'" was removed on the post.')
+                    ->action('View Post', url(route('post.view', $this->post->id))) // TODO
                     ->line('Thank you for using our application!');
     }
 

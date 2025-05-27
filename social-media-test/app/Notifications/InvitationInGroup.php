@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Group;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,7 +15,7 @@ class InvitationInGroup extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public Group $group, public int $hours, public string $token)
     {
         //
     }
@@ -34,10 +35,10 @@ class InvitationInGroup extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return ( new MailMessage )
+            ->line('You have been invited to join to group "' . $this->group->name . '"')
+            ->action('Join the Group', url(route('group.approveInvitation', $this->token)))
+            ->line('The link will be valid for next ' . $this->hours . ' hours');
     }
 
     /**

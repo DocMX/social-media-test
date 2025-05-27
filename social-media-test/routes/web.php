@@ -3,11 +3,10 @@
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
-use Illuminate\Foundation\Application;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
@@ -97,8 +96,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/update-images', [ProfileController::class, 'updateImage'])
         ->name('profile.updateImages');
+    Route::post('/user/follow/{user}', [UserController::class, 'follow'])->name('user.follow');
 
-     Route::get('/search/{search?}', [SearchController::class, 'search'])
+
+    Route::get('/search/{search?}', [SearchController::class, 'search'])
         ->name('search');
 });
 

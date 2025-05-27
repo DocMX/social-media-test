@@ -2,6 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Models\Group;
+use App\Models\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,7 +16,7 @@ class PostDeleted extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public function __construct(public Group $group)
     {
         //
     }
@@ -35,8 +37,8 @@ class PostDeleted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->line('Your post was deleted inside group "'.$this->group->name.'".')
+                    ->action('Open Group', url(route('group.profile', $this->group->slug)))
                     ->line('Thank you for using our application!');
     }
 
