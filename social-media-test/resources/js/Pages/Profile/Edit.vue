@@ -1,5 +1,4 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
@@ -18,39 +17,30 @@ defineProps({
 <template>
     <Head title="Profile" />
 
-    <AuthenticatedLayout>
-        <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200"
-            >
-                Profile
+    <div class="min-h-screen bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600 py-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-10 text-center drop-shadow-md">
+                PROFILE
             </h2>
-        </template>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
-                >
-                    <UpdateProfileInformationForm
-                        :must-verify-email="mustVerifyEmail"
-                        :status="status"
-                        class="max-w-xl"
-                    />
-                </div>
+            <!-- Card: Update Profile Info -->
+            <div class="bg-black/90 backdrop-blur-md shadow-lg rounded-2xl p-6 mb-8">
+                <UpdateProfileInformationForm
+                    :must-verify-email="mustVerifyEmail"
+                    :status="status"
+                    class="max-w-2xl"
+                />
+            </div>
 
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
-                >
-                    <UpdatePasswordForm class="max-w-xl" />
-                </div>
+            <!-- Card: Update Password -->
+            <div class="bg-black/90 backdrop-blur-md shadow-lg rounded-2xl p-6 mb-8">
+                <UpdatePasswordForm class="max-w-2xl" />
+            </div>
 
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8 dark:bg-gray-800"
-                >
-                    <DeleteUserForm class="max-w-xl" />
-                </div>
+            <!-- Card: Delete User -->
+            <div class="bg-black/90 backdrop-blur-md shadow-lg rounded-2xl p-6">
+                <DeleteUserForm class="max-w-2xl" />
             </div>
         </div>
-    </AuthenticatedLayout>
+    </div>
 </template>
