@@ -163,7 +163,7 @@ class GroupController extends Controller
 
         return back()->with('success', $success);
     }
-
+    //cambiar
     public function inviteUsers(InviteUsersRequest $request, Group $group)
     {
         $data = $request->validated();
