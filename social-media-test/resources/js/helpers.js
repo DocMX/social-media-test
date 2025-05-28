@@ -9,3 +9,4 @@ export const isVideo = (attachment) => {
     mime = mime.split('/')
     return mime[0].toLowerCase() === 'video'
 }
+

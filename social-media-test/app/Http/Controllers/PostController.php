@@ -52,7 +52,7 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request)
     {
-        $data =  $request->validated();
+        $data = $request->validated();
         $user = $request->user();
 
         DB::beginTransaction();
@@ -78,12 +78,23 @@ class PostController extends Controller
 
             DB::commit();
 
+            // Cargar relaciones necesarias
+            $post->load(['attachments' => function ($query) {
+                $query->select(['id', 'post_id', 'path', 'mime', 'name', 'created_at']);
+            }]);
+
             $group = $post->group;
 
             if ($group) {
                 $users = $group->approvedUsers()->where('users.id', '!=', $user->id)->get();
                 Notification::send($users, new PostCreated($post, $user, $group));
             }
+
+            // Devolver el post creado con sus relaciones
+            return redirect()->back()->with([
+                'post' => $post,
+                'message' => 'Post created successfully'
+            ]);
         } catch (\Exception $e) {
             foreach ($allFilePaths as $path) {
                 Storage::disk('public')->delete($path);
@@ -91,9 +102,8 @@ class PostController extends Controller
             DB::rollBack();
             throw $e;
         }
-
-        return back();
     }
+    
     public function update(UpdatePostRequest $request, Post $post)
     {
         $user = $request->user();

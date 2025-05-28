@@ -17,6 +17,10 @@ Route::get('/u/{user:username}', [ProfileController::class, 'index'])
 Route::get('/g/{group:slug}', [GroupController::class, 'profile'])
     ->name('group.profile');
 
+Route::get('/group/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])
+    ->name('group.approveInvitation');
+
+
 Route::middleware('auth')->group(function () {
 
     // Groups

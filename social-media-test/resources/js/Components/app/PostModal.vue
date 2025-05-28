@@ -29,7 +29,8 @@ const props = defineProps({
     modelValue: Boolean
 })
 
-const attachmentExtensions = usePage().props.attachmentExtensions;
+const page = usePage();
+const attachmentExtensions = computed(() => page.props.attachmentExtensions || []);
 /**
  * {
  *     file: File,
@@ -61,17 +62,23 @@ const computedAttachments = computed(() => {
     return [...attachmentFiles.value, ...(props.post.attachments || [])]
 })
 const showExtensionsText = computed(() => {
+    if (!attachmentFiles.value.length) return false;
+    
     for (let myFile of attachmentFiles.value) {
-        const file = myFile.file
-        let parts = file.name.split('.')
-        let ext = parts.pop().toLowerCase()
-        if (!attachmentExtensions.includes(ext)) {
-            return true
+        const file = myFile.file;
+        if (!file || !file.name) continue;
+        
+        let parts = file.name.split('.');
+        if (parts.length < 2) continue;
+        
+        let ext = parts.pop().toLowerCase();
+        if (!attachmentExtensions.value.includes(ext)) {
+            return true;
         }
     }
 
     return false;
-})
+});
 
 const emit = defineEmits(['update:modelValue', 'hide'])
 
