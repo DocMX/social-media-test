@@ -17,7 +17,10 @@ class Comment extends Model
     public array $childComments = [];
 
     protected $fillable = ['post_id', 'comment', 'user_id', 'parent_id'];
-
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
+    }
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

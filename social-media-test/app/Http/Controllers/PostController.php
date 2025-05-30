@@ -103,7 +103,7 @@ class PostController extends Controller
             throw $e;
         }
     }
-    
+
     public function update(UpdatePostRequest $request, Post $post)
     {
         $user = $request->user();
@@ -226,9 +226,16 @@ class PostController extends Controller
             'user_id' => Auth::id(),
             'parent_id' => $data['parent_id'] ?: null
         ]);
+        $comment->load(['user', 'parent.user', 'post.user']);
+        // Notificar al autor del post (si no es el mismo que comentó)
+        if ($post->user_id !== Auth::id()) {
+            $post->user->notify(new CommentCreated($comment, $post, 'post_author'));
+        }
 
-        $post = $comment->post;
-        $post->user->notify(new CommentCreated($comment, $post));
+        // Notificar al autor del comentario padre (si es una respuesta)
+        if ($comment->parent_id && $comment->parent->user_id !== Auth::id()) {
+            $comment->parent->user->notify(new CommentCreated($comment, $post, 'comment_reply'));
+        }
 
         return response(new CommentResource($comment), 201);
     }

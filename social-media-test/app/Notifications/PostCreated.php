@@ -29,15 +29,28 @@ class PostCreated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
+    public function toDatabase($notifiable)
+    {
+        return [
+            'title' => 'Nuevo post en el grupo ' . $this->group->name,
+            'message' => "{$this->user->name} publicó: {$this->post->title}",
+            'post_id' => $this->post->id,
+            'group_id' => $this->group->id,
+            'author' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+            ],
+        ];
+    }
     /**
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return ( new MailMessage )
+        return (new MailMessage)
             ->lineIf(!!$this->group, 'New post was added by user "' . $this->user->username . '" in group "' . $this->group?->slug . '".')
             ->lineIf(!$this->group, 'New post was added by user "' . $this->user->username . '"')
             ->action('View Post', url(route('post.view', $this->post->id)))

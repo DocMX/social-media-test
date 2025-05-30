@@ -7,6 +7,8 @@ import { ZiggyVue } from 'ziggy-js';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 import '../css/app.css';
 
+
+
 const html = window.document.documentElement
 const darkMode = parseInt(localStorage.getItem('darkMode') || 1)
 if (darkMode) {

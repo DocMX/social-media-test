@@ -1,16 +1,18 @@
 <script setup>
-import {  ref } from "vue";
+import { onMounted, ref } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link, router, usePage } from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
-import { MoonIcon, BellIcon } from "@heroicons/vue/24/solid";
-
+import { MoonIcon } from "@heroicons/vue/24/solid";
+import NotificationBell from "@/Components/app/NotificationBell.vue";
 
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || "");
+
+
 
 const authUser = usePage().props.auth.user;
 
@@ -28,6 +30,8 @@ function toggleDarkMode() {
         localStorage.setItem("darkMode", "1");
     }
 }
+
+
 </script>
 
 <template>
@@ -63,51 +67,9 @@ function toggleDarkMode() {
                         <button @click="toggleDarkMode" class="dark:text-white">
                             <MoonIcon class="w-5 h-5" />
                         </button>
-                        <!-- Icono de notificaciones -->
-                        <div class="relative">
-                            <button 
-                                @click="toggleNotifications"
-                                class="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
-                            >
-                                <BellIcon class="h-6 w-6" />
-                                <!-- Indicador de notificaciones no leídas (opcional) -->
-                                <span 
-                                    v-if="authUser?.unread_notifications_count > 0"
-                                    class="absolute top-0 right-0 inline-block w-3 h-3 bg-red-500 rounded-full"
-                                ></span>
-                            </button>
-                            
-                            <!-- Dropdown de notificaciones -->
-                            <div 
-                                v-show="showNotifications"
-                                class="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-md shadow-lg overflow-hidden z-10 border border-gray-200 dark:border-gray-700"
-                            >
-                                <div class="py-1">
-                                    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                                        <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Notificaciones
-                                        </p>
-                                    </div>
-                                    
-                                    <!-- Lista de notificaciones -->
-                                    <template v-if="authUser?.notifications?.length">
-                                        <a 
-                                            v-for="notification in authUser.notifications"
-                                            :key="notification.id"
-                                            href="#"
-                                            class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                        >
-                                            {{ notification.data.message }}
-                                        </a>
-                                    </template>
-                                    <template v-else>
-                                        <p class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-                                            No hay notificaciones nuevas
-                                        </p>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
+                         <!-- Componente de Notificaciones -->
+                        <NotificationBell />
+                    
                     </div>
 
                     <div class="hidden sm:flex sm:items-center">

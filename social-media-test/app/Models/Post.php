@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Illuminate\Notifications\Notifiable;
 
 class Post extends Model
 {
     use HasFactory;
     use SoftDeletes;
-
+    use Notifiable;
     protected $fillable = ['user_id', 'body', 'group_id', 'preview', 'preview_url'];
 
     // With casting
