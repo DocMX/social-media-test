@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
@@ -66,5 +67,17 @@ class NotificationController extends Controller
         $request->user()->unreadNotifications->markAsRead();
 
         return response()->json(['success' => true]);
+    }
+    public function clearNotifications(Request $request)
+    {
+        $user = Auth::user();
+
+        if (method_exists($user, 'notifications')) {
+            $user->notifications()->delete();
+
+            return response()->json(['message' => 'Notificaciones eliminadas con éxito']);
+        }
+
+        return response()->json(['message' => 'El usuario no tiene notificaciones configuradas'], 500);
     }
 }

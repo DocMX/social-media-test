@@ -46,6 +46,16 @@ const markAllAsRead = async () => {
     }
 };
 
+// Eliminar todas las notificaciones
+const clearNotifications = async () => {
+    try {
+        await axios.post(route("notifications.clear"));
+        await fetchNotifications();
+    } catch (error) {
+        console.error("Error clearing notifications:", error);
+    }
+};
+
 // Formatear tiempo transcurrido
 const formatTimeAgo = (dateString) => {
     const date = new Date(dateString);
@@ -200,7 +210,6 @@ onMounted(() => {
         <!-- Dropdown de notificaciones -->
         <div
             v-show="showDropdown"
-          
             class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-md shadow-lg overflow-hidden z-50 border border-gray-200 dark:border-gray-700"
         >
             <div class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -219,6 +228,14 @@ onMounted(() => {
                         class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
                     >
                         Marcar todas como leídas
+                    </button>
+
+                    <button
+                        v-if="notifications.length"
+                        @click="clearNotifications"
+                        class="text-xs text-red-600 dark:text-red-400 hover:underline ml-2"
+                    >
+                        clear notifications
                     </button>
                 </div>
 

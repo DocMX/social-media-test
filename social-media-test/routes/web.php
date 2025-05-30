@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
         Route::put('/{group:slug}', [GroupController::class, 'update'])
             ->name('group.update');
-        
+
         Route::post('/update-images/{group:slug}', [GroupController::class, 'updateImage'])
             ->name('group.updateImages');
 
@@ -50,7 +50,6 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/change-role/{group:slug}', [GroupController::class, 'changeRole'])
             ->name('group.changeRole');
-
     });
 
     // Posts
@@ -107,7 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
-
+    Route::post('/notifications/clear', [NotificationController::class, 'clearNotifications'])->name('notifications.clear');
 
     Route::get('/search/{search?}', [SearchController::class, 'search'])
         ->name('search');
