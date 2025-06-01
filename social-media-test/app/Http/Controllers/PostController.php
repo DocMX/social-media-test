@@ -178,38 +178,51 @@ class PostController extends Controller
     public function postReaction(Request $request, Post $post)
     {
         $data = $request->validate([
-            'reaction' => [Rule::enum(ReactionEnum::class)]
+            'reaction' => ['required', Rule::enum(ReactionEnum::class)]
         ]);
 
         $userId = Auth::id();
-        $reaction = Reaction::where('user_id', $userId)
-            ->where('object_id', $post->id)
-            ->where('object_type', Post::class)
-            ->first();
+
+        
+
+        // Buscar reacción existente
+        $reaction = Reaction::where([
+            'user_id' => $userId,
+            'object_id' => $post->id,
+            'object_type' => Post::class
+        ])->first();
+
+        $hasReaction = false;
 
         if ($reaction) {
-            $hasReaction = false;
+            // Eliminar reacción existente
             $reaction->delete();
         } else {
-            $hasReaction = true;
+            // Crear nueva reacción
             Reaction::create([
                 'object_id' => $post->id,
                 'object_type' => Post::class,
                 'user_id' => $userId,
                 'type' => $data['reaction']
             ]);
+            $hasReaction = true;
 
-            if (!$post->isOwner($userId)) {
-                $user = User::where('id', $userId)->first();
-                $post->user->notify(new ReactionAddedOnPost($post, $user));
-            }
+            // Enviar notificación solo si no es el dueño del post
+            $post->user->notify(
+                new ReactionAddedOnPost($post, Auth::user())
+            );
         }
 
-        $reactions = Reaction::where('object_id', $post->id)->where('object_type', Post::class)->count();
+        // Contar todas las reacciones (optimizado)
+        $reactionsCount = Reaction::where([
+            'object_id' => $post->id,
+            'object_type' => Post::class
+        ])->count();
 
-        return response([
-            'num_of_reactions' => $reactions,
-            'current_user_has_reaction' => $hasReaction
+        return response()->json([
+            'num_of_reactions' => $reactionsCount,
+            'current_user_has_reaction' => $hasReaction,
+            'reaction_type' => $hasReaction ? $data['reaction'] : null
         ]);
     }
 

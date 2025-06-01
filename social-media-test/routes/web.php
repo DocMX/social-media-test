@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
             ->name('post.download');
 
         Route::post('/{post}/reaction', [PostController::class, 'postReaction'])
+            ->middleware('throttle:60,1') // 60 intentos por minuto
             ->name('post.reaction');
 
         Route::post('/{post}/comment', [PostController::class, 'createComment'])

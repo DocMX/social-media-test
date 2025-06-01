@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ReactionAddedOnPost extends Notification
+class ReactionAddedOnPost extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -28,7 +28,8 @@ class ReactionAddedOnPost extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        // Agregamos 'database' para almacenar la notificación
+        return ['database', 'mail'];
     }
 
     /**
@@ -37,9 +38,31 @@ class ReactionAddedOnPost extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('User "'.$this->user->username.'" liked your post.')
-                    ->action('View Post', url(route('post.view', $this->post->id)))
-                    ->line('Thank you for using our application!');
+                    ->subject('Nueva reacción en tu publicación')
+                    ->line('El usuario "'.$this->user->username.'" reaccionó a tu publicación.')
+                    ->action('Ver publicación', $this->getPostUrl())
+                    ->line('Gracias por usar nuestra aplicación!');
+    }
+
+    /**
+     * Get the array representation for database storage.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'type' => 'post_reaction',
+            'message' => "{$this->user->username} le dio me gusta a tu publicación",
+            'post_id' => $this->post->id,
+            'post_title' => $this->post->title,
+            'post_excerpt' => str($this->post->content)->limit(100),
+            'user_id' => $this->user->id,
+            'user_username' => $this->user->username,
+            'user_avatar' => $this->user->avatar_url,
+            'link' => $this->getPostUrl(),
+            'created_at' => now()->toDateTimeString(),
+        ];
     }
 
     /**
@@ -49,8 +72,17 @@ class ReactionAddedOnPost extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            //
-        ];
+        return $this->toDatabase($notifiable);
+    }
+
+    /**
+     * Get the URL for the post
+     */
+    protected function getPostUrl(): string
+    {
+        return route('post.view', [
+            'post' => $this->post->slug ?? $this->post->id,
+            'id' => $this->post->id
+        ]);
     }
 }
