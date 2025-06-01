@@ -205,12 +205,6 @@ class GroupController extends Controller
             // Enviar notificación con el token original (no el hash)
             $user->notify(new InvitationInGroup($group, $hours, $token));
 
-            // Opcional: Registrar actividad
-            activity()
-                ->causedBy($inviter)
-                ->performedOn($group)
-                ->log("Invited user {$user->email} to group");
-
             return back()->with('success', 'Invitación enviada correctamente');
         } catch (\Exception $e) {
             Log::error("Error al invitar usuario al grupo: " . $e->getMessage());

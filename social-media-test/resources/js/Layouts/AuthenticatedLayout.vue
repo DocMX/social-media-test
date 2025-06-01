@@ -7,7 +7,7 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link, router, usePage } from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
 import { MoonIcon } from "@heroicons/vue/24/solid";
-import NotificationBell from "@/Components/app/NotificationBell.vue";
+import NotificationBell from "@/Components/app/notifications/NotificationBell.vue";
 
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || "");
