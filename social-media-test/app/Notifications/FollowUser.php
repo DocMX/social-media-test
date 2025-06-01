@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class FollowUser extends Notification
+class FollowUser extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -27,7 +27,7 @@ class FollowUser extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database', 'mail']; // Agregamos 'database' a los canales
     }
 
     /**
@@ -48,14 +48,31 @@ class FollowUser extends Notification
     }
 
     /**
+     * Get the array representation for database storage.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'type' => $this->follow ? 'user_followed' : 'user_unfollowed',
+            'message' => $this->follow 
+                ? "{$this->user->username} started following you"
+                : "{$this->user->username} stopped following you",
+            'user_id' => $this->user->id,
+            'user_username' => $this->user->username,
+            'user_avatar' => $this->user->avatar_url,
+            'link' => route('profile', $this->user),
+        ];
+    }
+
+    /**
      * Get the array representation of the notification.
      *
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            //
-        ];
+        return $this->toDatabase($notifiable); // Puedes usar el mismo formato que toDatabase
     }
 }
