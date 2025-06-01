@@ -29,11 +29,16 @@ const fetchNotifications = async () => {
 // Marcar como leída
 const markAsRead = async (notificationId) => {
     try {
-        await axios.post(route("notifications.markAsRead", { notificationId }));
+        await axios.post(route("notifications.markAsRead", { id: notificationId }));
         await fetchNotifications();
     } catch (error) {
         console.error("Error marking notification as read:", error);
     }
+};
+
+const handleNotificationClick = async (notification) => {
+    await markAsRead(notification.id);
+    window.location.href = getNotificationUrl(notification);
 };
 
 // Marcar todas como leídas
@@ -151,8 +156,17 @@ const getNotificationTitle = (notification) => {
 
 // Obtener URL de notificación
 const getNotificationUrl = (notification) => {
+    // Si es una notificación relacionada con un post o comentario
+    if (notification.data?.post_id) {
+        return route('post.viewIndividual', {
+            post: notification.data.post_slug || notification.data.post_id, // Puedes usar slug o ID
+            id: notification.data.post_id
+        });
+    }
+    
     return notification.data?.link || "#";
 };
+
 
 // Obtener clases CSS para el fondo según tipo
 const getNotificationBgClass = (notification) => {
@@ -244,11 +258,10 @@ onMounted(() => {
                     v-if="notifications.length"
                     class="max-h-96 overflow-y-auto"
                 >
-                    <a
+                    <div
                         v-for="notification in notifications"
                         :key="notification.id"
-                        @click="markAsRead(notification.id)"
-                        :href="getNotificationUrl(notification)"
+                        @click="handleNotificationClick(notification)"
                         class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition group"
                         :class="getNotificationBgClass(notification)"
                     >
@@ -316,7 +329,7 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 </div>
 
                 <div v-else class="px-4 py-6 text-center">

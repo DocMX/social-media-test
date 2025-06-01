@@ -401,4 +401,30 @@ class PostController extends Controller
 
         //        return response("You don't have permission to perform this action", 403);
     }
+
+    public function viewIndividual(Request $request, $post, $id)
+    {
+        // Primero obtenemos el post, asegurándonos que el ID coincide
+        $post = Post::where('id', $id)->firstOrFail();
+
+        // Verificamos permisos del grupo (igual que en tu función view)
+        if ($post->group_id && !$post->group->hasApprovedUser(Auth::id())) {
+            return inertia('Error', [
+                'title' => 'Permission Denied',
+                'body' => "You don't have permission to view that post"
+            ])->toResponse($request)->setStatusCode(403);
+        }
+
+        // Cargamos los conteos y relaciones (igual que en tu función view)
+        $post->loadCount('reactions');
+        $post->load([
+            'comments' => function ($query) {
+                $query->withCount('reactions');
+            },
+        ]);
+
+        return inertia('Post/View', [
+            'post' => new PostResource($post)
+        ]);
+    }
 }
