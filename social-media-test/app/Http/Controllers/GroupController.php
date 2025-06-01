@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -136,7 +137,7 @@ class GroupController extends Controller
         ]);
         $thumbnail = $data['thumbnail'] ?? null;
 
-         /** @var \Illuminate\Http\UploadedFile $cover */
+        /** @var \Illuminate\Http\UploadedFile $cover */
         $cover = $data['cover'] ?? null;
 
         $success = '';
@@ -167,37 +168,59 @@ class GroupController extends Controller
     public function inviteUsers(InviteUsersRequest $request, Group $group)
     {
         $data = $request->validated();
-
+        $inviter = Auth::user();
         $user = $request->user;
 
-        $groupUser = $request->groupUser;
+        // Verificar si el usuario ya está en el grupo con estado diferente a PENDING
+        $existingGroupUser = GroupUser::where('user_id', $user->id)
+            ->where('group_id', $group->id)
+            ->where('status', '!=', GroupUserStatus::PENDING->value)
+            ->first();
 
-        if ($groupUser) {
-            $groupUser->delete();
+        if ($existingGroupUser) {
+            return back()->with('error', 'El usuario ya es miembro de este grupo');
         }
 
+        // Eliminar invitación previa si existe
+        GroupUser::where('user_id', $user->id)
+            ->where('group_id', $group->id)
+            ->where('status', GroupUserStatus::PENDING->value)
+            ->delete();
+
+        // Crear nueva invitación
         $hours = 24;
-        $token = Str::random(256);
+        $token = Str::random(64); // Longitud más segura
 
-        GroupUser::create([
-            'status' => GroupUserStatus::PENDING->value,
-            'role' => GroupUserRole::USER->value,
-            'token' => $token,
-            'token_expire_date' => Carbon::now()->addHours($hours),
-            'user_id' => $user->id,
-            'group_id' => $group->id,
-            'created_by' => Auth::id(),
-        ]);
+        try {
+            $groupUser = GroupUser::create([
+                'status' => GroupUserStatus::PENDING->value,
+                'role' => GroupUserRole::USER->value,
+                'token' => hash('sha256', $token), // Almacenar hash en lugar del token plano
+                'token_expire_date' => Carbon::now()->addHours($hours),
+                'user_id' => $user->id,
+                'group_id' => $group->id,
+                'created_by' => $inviter->id,
+            ]);
 
-         $user->notify(new InvitationInGroup($group, $hours, $token));
+            // Enviar notificación con el token original (no el hash)
+            $user->notify(new InvitationInGroup($group, $hours, $token));
 
+            // Opcional: Registrar actividad
+            activity()
+                ->causedBy($inviter)
+                ->performedOn($group)
+                ->log("Invited user {$user->email} to group");
 
-        return back()->with('success', 'User was invited to join to group');
+            return back()->with('success', 'Invitación enviada correctamente');
+        } catch (\Exception $e) {
+            Log::error("Error al invitar usuario al grupo: " . $e->getMessage());
+            return back()->with('error', 'Ocurrió un error al enviar la invitación');
+        }
     }
 
     public function approveInvitation(string $token)
     {
-         $groupUser = GroupUser::query()
+        $groupUser = GroupUser::query()
             ->where('token', $token)
             ->first();
 
@@ -279,7 +302,7 @@ class GroupController extends Controller
             $user = $groupUser->user;
             $user->notify(new RequestApproved($groupUser->group, $user, $approved));
 
-            return back()->with('success', 'User "' . $user->name . '" was ' . ( $approved ? 'approved' : 'rejected' ));
+            return back()->with('success', 'User "' . $user->name . '" was ' . ($approved ? 'approved' : 'rejected'));
         }
 
         return back();
