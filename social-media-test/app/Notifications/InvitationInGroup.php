@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvitationInGroup extends Notification
+class InvitationInGroup extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -27,18 +27,39 @@ class InvitationInGroup extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database', 'mail'];
     }
 
-    /**
+    /** 
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return ( new MailMessage )
-            ->line('You have been invited to join to group "' . $this->group->name . '"')
-            ->action('Join the Group', url(route('group.approveInvitation', $this->token)))
-            ->line('The link will be valid for next ' . $this->hours . ' hours');
+        return (new MailMessage)
+            ->subject('Invitación a grupo: ' . $this->group->name)
+            ->line('Has sido invitado a unirte al grupo "' . $this->group->name . '"')
+            ->action('Unirse al Grupo', url(route('group.approveInvitation', $this->token)))
+            ->line('El enlace será válido por las próximas ' . $this->hours . ' horas');
+    }
+
+    /**
+     * Get the array representation for database storage.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'type' => 'group_invitation',
+            'message' => 'Invitación al grupo: ' . $this->group->name,
+            'group_id' => $this->group->id,
+            'group_name' => $this->group->name,
+            'group_avatar' => $this->group->avatar_url,
+            'hours_valid' => $this->hours,
+            'token' => $this->token,
+            'invitation_url' => route('group.approveInvitation', $this->token),
+            'created_at' => now()->toDateTimeString(),
+        ];
     }
 
     /**
@@ -48,8 +69,6 @@ class InvitationInGroup extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            //
-        ];
+        return $this->toDatabase($notifiable);
     }
 }
