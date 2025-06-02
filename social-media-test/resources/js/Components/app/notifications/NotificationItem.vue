@@ -56,6 +56,9 @@ const handleClick = async () => {
                 >
                     En respuesta a tu comentario
                 </div>
+
+
+                <!-- Información sobre invitacion a grupo -->
                 <div
                     v-if="notification.data?.type === 'group_invitation'"
                     class="mt-2 space-y-1"

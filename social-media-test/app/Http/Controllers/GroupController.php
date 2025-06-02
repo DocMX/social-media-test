@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -214,33 +215,57 @@ class GroupController extends Controller
 
     public function approveInvitation(string $token)
     {
-        $groupUser = GroupUser::query()
-            ->where('token', $token)
+        // Buscar la invitación con relaciones precargadas para mejor performance
+        $groupUser = GroupUser::with(['group', 'user', 'adminUser'])
+            ->where('token', hash('sha256', $token)) // Buscar por hash del token
             ->first();
 
-        $errorTitle = '';
+        // Validaciones mejoradas
         if (!$groupUser) {
-            $errorTitle = 'The link is not valid';
-        } else if ($groupUser->token_used || $groupUser->status === GroupUserStatus::APPROVED->value) {
-            $errorTitle = 'The link is already used';
-        } else if ($groupUser->token_expire_date < Carbon::now()) {
-            $errorTitle = 'The link is expired';
+            return $this->handleInvitationError('The invitation link is not valid');
         }
 
-        if ($errorTitle) {
-            return \inertia('Error', compact('errorTitle'));
+        if ($groupUser->token_used || $groupUser->status === GroupUserStatus::APPROVED->value) {
+            return $this->handleInvitationError('This invitation has already been used');
         }
 
-        $groupUser->status = GroupUserStatus::APPROVED->value;
-        $groupUser->token_used = Carbon::now();
-        $groupUser->save();
+        if ($groupUser->token_expire_date < now()) {
+            return $this->handleInvitationError('The invitation link has expired');
+        }
 
-        $adminUser = $groupUser->adminUser;
+        // Procesar la aceptación en una transacción
+        try {
+            DB::transaction(function () use ($groupUser) {
+                $groupUser->update([
+                    'status' => GroupUserStatus::APPROVED->value,
+                    'token_used' => now(),
+                    'approved_at' => now(), // Campo adicional para tracking
+                ]);
 
-        $adminUser->notify(new InvitationApproved($groupUser->group, $groupUser->user));
+                // Notificar al admin/creador del grupo
+                $groupUser->adminUser->notify(
+                    new InvitationApproved($groupUser->group, $groupUser->user)
+                );
+            });
 
-        return redirect(route('group.profile', $groupUser->group))
-            ->with('success', 'You accepted to join to group "' . $groupUser->group->name . '"');
+            return redirect()
+                ->route('group.profile', $groupUser->group)
+                ->with('success', __(
+                    'You have successfully joined the group ":group"',
+                    ['group' => $groupUser->group->name]
+                ));
+        } catch (\Exception $e) {
+            Log::error("Error approving group invitation: " . $e->getMessage());
+            return $this->handleInvitationError('An error occurred while processing your request');
+        }
+    }
+
+    protected function handleInvitationError(string $message)
+    {
+        return inertia('Error', [
+            'errorTitle' => $message,
+            'errorDescription' => 'Please contact the group administrator for a new invitation.',
+        ]);
     }
 
     public function join(Group $group)
@@ -270,38 +295,41 @@ class GroupController extends Controller
     public function approveRequest(Request $request, Group $group)
     {
         if (!$group->isAdmin(Auth::id())) {
-            return response("You don't have permission to perform this action", 403);
+            return response("No tienes permiso para realizar esta acción", 403);
         }
 
         $data = $request->validate([
-            'user_id' => ['required'],
-            'action' => ['required']
+            'user_id' => ['required', 'exists:users,id'],
+            'action' => ['required', 'in:approve,reject']
         ]);
 
         $groupUser = GroupUser::where('user_id', $data['user_id'])
             ->where('group_id', $group->id)
             ->where('status', GroupUserStatus::PENDING->value)
-            ->first();
+            ->firstOrFail();
 
-        if ($groupUser) {
-            $approved = false;
-            if ($data['action'] === 'approve') {
-                $approved = true;
-                $groupUser->status = GroupUserStatus::APPROVED->value;
-            } else {
-                $groupUser->status = GroupUserStatus::REJECTED->value;
-            }
-            $groupUser->save();
+        $approved = $data['action'] === 'approve';
+        $groupUser->status = $approved
+            ? GroupUserStatus::APPROVED->value
+            : GroupUserStatus::REJECTED->value;
 
-            $user = $groupUser->user;
-            $user->notify(new RequestApproved($groupUser->group, $user, $approved));
+        $groupUser->save();
 
-            return back()->with('success', 'User "' . $user->name . '" was ' . ($approved ? 'approved' : 'rejected'));
-        }
+        $user = $groupUser->user;
+        $user->notify(new RequestApproved(
+            $group,
+            $user,
+            $approved,
+            Auth::user() // Quién procesó la solicitud
+        ));
 
-        return back();
+        return back()->with(
+            'success',
+            'Solicitud de "' . $user->name . '" ' .
+                ($approved ? 'aprobada' : 'rechazada') .
+                ' correctamente'
+        );
     }
-
     public function removeUser(Request $request, Group $group)
     {
         if (!$group->isAdmin(Auth::id())) {

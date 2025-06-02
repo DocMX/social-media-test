@@ -22,6 +22,11 @@ class GroupUser extends Model
         'token',
         'token_expire_date',
     ];
+    protected $casts = [
+        'token_expire_date' => 'datetime',
+        'token_used' => 'datetime',
+        'approved_at' => 'datetime',
+    ];
 
     public function adminUser(): BelongsTo
     {

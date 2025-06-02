@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvitationApproved extends Notification
+class InvitationApproved extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -29,7 +29,7 @@ class InvitationApproved extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['database', 'mail'];
     }
 
     /**
@@ -38,9 +38,32 @@ class InvitationApproved extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('User "'.$this->user->name.'" has join to group "'.$this->group->name.'"')
-                    ->action('Open Group', url(route('group.profile', $this->group)))
-                    ->line('Thank you for using our application!');
+            ->subject('Nuevo miembro en el grupo: ' . $this->group->name)
+            ->line('El usuario "' . $this->user->name . '" se ha unido al grupo "' . $this->group->name . '"')
+            ->action('Abrir Grupo', url(route('group.profile', $this->group)))
+            ->line('¡Gracias por usar nuestra aplicación!');
+    }
+
+    /**
+     * Get the array representation for database storage.
+     *
+     * @return array<string, mixed>
+     */
+    public function toDatabase(object $notifiable): array
+    {
+        return [
+            'type' => 'group_invitation_approved',
+            'message' => 'Nuevo miembro en el grupo: ' . $this->group->name,
+            'group_id' => $this->group->id,
+            'group_name' => $this->group->name,
+            'group_avatar' => $this->group->avatar_url,
+            'user_id' => $this->user->id,
+            'user_name' => $this->user->name,
+            'user_username' => $this->user->username,
+            'user_avatar' => $this->user->avatar_url,
+            'group_url' => route('group.profile', $this->group),
+            'created_at' => now()->toDateTimeString(),
+        ];
     }
 
     /**
@@ -50,8 +73,6 @@ class InvitationApproved extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        return [
-            //
-        ];
+        return $this->toDatabase($notifiable);
     }
 }

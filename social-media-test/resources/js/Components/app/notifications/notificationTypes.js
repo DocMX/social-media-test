@@ -90,6 +90,60 @@ export const notificationTypes = {
             "Invitado por": data.invited_by || "Administrador",
         }),
     },
+    group_invitation_approved: {
+        icon: UserGroupIcon,
+        badge: {
+            text: "Nuevo Miembro",
+            class: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200",
+        },
+        bgClass: "bg-teal-50 dark:bg-teal-900/30",
+        iconClass: "text-teal-500 group-hover:text-teal-600 dark:text-teal-400",
+        getTitle: () => "Nuevo miembro en grupo",
+        getMessage: (data) =>
+            `El usuario ${data.user_name} se unió al grupo "${data.group_name}"`,
+        getUrl: (data) => data.group_url,
+        getMeta: (data) => ({
+            Grupo: data.group_name,
+            Usuario: data.user_name,
+        }),
+    },
+    group_request_approved: {
+        icon: UserGroupIcon,
+        badge: {
+            text: "Solicitud Aprobada",
+            class: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+        },
+        bgClass: "bg-green-50 dark:bg-green-900/30",
+        iconClass:
+            "text-green-500 group-hover:text-green-600 dark:text-green-400",
+        getTitle: () => "Solicitud aprobada",
+        getMessage: (data) =>
+            `${data.processed_by_name} aprobó tu solicitud al grupo "${data.group_name}"`,
+        getUrl: (data) => data.group_url,
+        getMeta: (data) => ({
+            Grupo: data.group_name,
+            "Procesado por": data.processed_by_name,
+            Fecha: formatDateTime(data.processed_at),
+        }),
+    },
+    group_request_rejected: {
+        icon: UserGroupIcon,
+        badge: {
+            text: "Solicitud Rechazada",
+            class: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+        },
+        bgClass: "bg-red-50 dark:bg-red-900/30",
+        iconClass: "text-red-500 group-hover:text-red-600 dark:text-red-400",
+        getTitle: () => "Solicitud rechazada",
+        getMessage: (data) =>
+            `${data.processed_by_name} rechazó tu solicitud al grupo "${data.group_name}"`,
+        getUrl: (data) => data.group_url,
+        getMeta: (data) => ({
+            Grupo: data.group_name,
+            "Procesado por": data.processed_by_name,
+            Fecha: formatDateTime(data.processed_at),
+        }),
+    },
     default: {
         icon: BellIcon,
         badge: {
