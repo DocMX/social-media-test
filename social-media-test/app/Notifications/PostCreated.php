@@ -35,6 +35,7 @@ class PostCreated extends Notification
     public function toDatabase($notifiable)
     {
         return [
+            'type' => 'post_created',
             'title' => 'Nuevo post en el grupo ' . $this->group->name,
             'message' => "{$this->user->name} publicó: {$this->post->title}",
             'post_id' => $this->post->id,

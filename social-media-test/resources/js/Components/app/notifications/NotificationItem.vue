@@ -57,7 +57,6 @@ const handleClick = async () => {
                     En respuesta a tu comentario
                 </div>
 
-
                 <!-- Información sobre invitacion a grupo -->
                 <div
                     v-if="notification.data?.type === 'group_invitation'"
@@ -74,7 +73,7 @@ const handleClick = async () => {
                         <span>{{ value }}</span>
                     </div>
                 </div>
-
+                
                 <!-- Pie de notificación -->
                 <div class="mt-1 flex items-center justify-between">
                     <p class="text-xs text-gray-400">

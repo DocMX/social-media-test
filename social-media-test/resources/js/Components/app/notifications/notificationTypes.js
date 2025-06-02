@@ -3,6 +3,7 @@ import {
     ChatBubbleBottomCenterTextIcon,
     ArrowUturnLeftIcon,
     UserIcon,
+    DocumentTextIcon,
     UserGroupIcon,
 } from "@heroicons/vue/24/outline";
 
@@ -41,6 +42,38 @@ export const notificationTypes = {
                 post: data.post_slug || data.post_id,
                 id: data.post_id,
             }),
+    },
+    post_created: {
+        icon: DocumentTextIcon, // Asegúrate de importar este icono
+        badge: {
+            text: "Nuevo Post",
+            class: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+        },
+        bgClass: "bg-blue-50 dark:bg-blue-900/30",
+        iconClass: "text-blue-500 group-hover:text-blue-600 dark:text-blue-400",
+        getTitle: (data) =>
+            data.group_id
+                ? `Nuevo post en ${data.group_name || "el grupo"}`
+                : "Nuevo post publicado",
+        getMessage: (data) =>
+            `${data.author.name} publicó: ${
+                data.post_title || "un nuevo post"
+            }`,
+        getUrl: (data) =>
+            route("post.view", {
+                post: data.post_slug || data.post_id,
+                id: data.post_id,
+            }),
+        getMeta: (data) => {
+            const meta = {
+                Autor: data.author.name,
+                Fecha: formatDateTime(data.created_at),
+            };
+            if (data.group_id) {
+                meta["Grupo"] = data.group_name;
+            }
+            return meta;
+        },
     },
     user_followed: {
         icon: UserIcon,
