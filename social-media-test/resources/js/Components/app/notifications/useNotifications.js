@@ -53,7 +53,7 @@ export default function useNotifications() {
         // Limpiar intervalo al desmontar
         return () => clearInterval(intervalId);
     });
-
+    
     return {
         notifications,
         unreadCount,

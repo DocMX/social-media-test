@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue';
-import { BellIcon } from '@heroicons/vue/24/outline';
-import useNotifications from './useNotifications';
-import NotificationHeader from './NotificationHeader.vue';
-import NotificationItem from './NotificationItem.vue';
+import { ref } from "vue";
+import { BellIcon } from "@heroicons/vue/24/outline";
+import useNotifications from "./useNotifications";
+import NotificationHeader from "./NotificationHeader.vue";
+import NotificationItem from "./NotificationItem.vue";
+
 
 const showDropdown = ref(false);
 const dropdownRef = ref(null);
@@ -14,12 +15,14 @@ const {
     isLoading,
     markAsRead,
     markAllAsRead,
-    clearNotifications
+    clearNotifications,
 } = useNotifications();
 
 const handleNotificationClick = async (notificationId) => {
     await markAsRead(notificationId);
 };
+
+
 </script>
 
 <template>
