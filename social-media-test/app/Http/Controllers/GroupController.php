@@ -173,7 +173,7 @@ class GroupController extends Controller
         $inviter = Auth::user();
         $user = $request->user;
 
-        
+
         $existingGroupUser = GroupUser::where('user_id', $user->id)
             ->where('group_id', $group->id)
             ->where('status', '!=', GroupUserStatus::PENDING->value)
@@ -183,13 +183,13 @@ class GroupController extends Controller
             return back()->with('error', 'El usuario ya es miembro de este grupo');
         }
 
-       
+
         GroupUser::where('user_id', $user->id)
             ->where('group_id', $group->id)
             ->where('status', GroupUserStatus::PENDING->value)
             ->delete();
 
-      
+
         $hours = 24;
         $token = Str::random(64);
 
@@ -197,7 +197,7 @@ class GroupController extends Controller
             $groupUser = GroupUser::create([
                 'status' => GroupUserStatus::PENDING->value,
                 'role' => GroupUserRole::USER->value,
-                'token' => hash('sha256', $token), 
+                'token' => hash('sha256', $token),
                 'token_expire_date' => Carbon::now()->addHours($hours),
                 'user_id' => $user->id,
                 'group_id' => $group->id,
@@ -328,7 +328,7 @@ class GroupController extends Controller
             $group,
             $user,
             $approved,
-            Auth::user() 
+            Auth::user()
         ));
 
         return back()->with(
@@ -395,5 +395,43 @@ class GroupController extends Controller
         }
 
         return back();
+    }
+
+    public function leaveGroup($slug): RedirectResponse
+    {
+        $group = Group::where('slug', $slug)->firstOrFail();
+        $userId = Auth::id();
+
+        // Verificar si el usuario es el dueño del grupo
+        if ($group->isOwner($userId)) {
+            return back()->with('error', 'No puedes abandonar el grupo porque eres el propietario. Debes transferir la propiedad o eliminar el grupo.');
+        }
+
+        // Buscar la relación del usuario con el grupo
+        $groupUser = GroupUser::where('user_id', $userId)
+            ->where('group_id', $group->id)
+            ->first();
+
+        if (!$groupUser) {
+            return back()->with('error', 'No eres miembro de este grupo.');
+        }
+
+        try {
+            DB::transaction(function () use ($groupUser, $group, $userId) {
+                // Eliminar la relación
+                $groupUser->delete();
+
+                // Notificar a los administradores del grupo
+                $admins = $group->adminUsers;
+                $leavingUser = Auth::user();
+
+                Notification::send($admins, new UserRemovedFromGroup($group, $leavingUser, true));
+            });
+
+            return back()->with('success', 'Has abandonado el grupo correctamente.');
+        } catch (\Exception $e) {
+            Log::error("Error al abandonar el grupo: " . $e->getMessage());
+            return back()->with('error', 'Ocurrió un error al intentar abandonar el grupo.');
+        }
     }
 }

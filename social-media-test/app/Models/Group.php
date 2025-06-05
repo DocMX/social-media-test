@@ -19,7 +19,7 @@ class Group extends Model
     use SoftDeletes;
     use HasSlug;
 
-    protected $fillable = ['name', 'user_id', 'auto_approval', 'about', 'cover_path', 'thumbnail_path', 'pinned_post_id'];
+    protected $fillable = ['name', 'user_id', 'slug' , 'auto_approval', 'about', 'cover_path', 'thumbnail_path', 'pinned_post_id'];
 
     protected $attributes = [
         'auto_approval' => false,

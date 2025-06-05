@@ -50,13 +50,16 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/change-role/{group:slug}', [GroupController::class, 'changeRole'])
             ->name('group.changeRole');
+
+        Route::post('/groups/{group}/leave', [GroupController::class, 'leaveGroup'])
+            ->name('group.leave');
     });
 
     // Posts
     Route::prefix('/post')->group(function () {
         Route::get('/{post}', [PostController::class, 'view'])
             ->name('post.view');
-        
+
         Route::get('/{post}/{id}', [PostController::class, 'viewIndividual'])
             ->name('post.viewIndividual');
 
