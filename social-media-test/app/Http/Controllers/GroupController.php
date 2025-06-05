@@ -173,7 +173,7 @@ class GroupController extends Controller
         $inviter = Auth::user();
         $user = $request->user;
 
-        // Verificar si el usuario ya está en el grupo con estado diferente a PENDING
+        
         $existingGroupUser = GroupUser::where('user_id', $user->id)
             ->where('group_id', $group->id)
             ->where('status', '!=', GroupUserStatus::PENDING->value)
@@ -183,21 +183,21 @@ class GroupController extends Controller
             return back()->with('error', 'El usuario ya es miembro de este grupo');
         }
 
-        // Eliminar invitación previa si existe
+       
         GroupUser::where('user_id', $user->id)
             ->where('group_id', $group->id)
             ->where('status', GroupUserStatus::PENDING->value)
             ->delete();
 
-        // Crear nueva invitación
+      
         $hours = 24;
-        $token = Str::random(64); // Longitud más segura
+        $token = Str::random(64);
 
         try {
             $groupUser = GroupUser::create([
                 'status' => GroupUserStatus::PENDING->value,
                 'role' => GroupUserRole::USER->value,
-                'token' => hash('sha256', $token), // Almacenar hash en lugar del token plano
+                'token' => hash('sha256', $token), 
                 'token_expire_date' => Carbon::now()->addHours($hours),
                 'user_id' => $user->id,
                 'group_id' => $group->id,
@@ -328,7 +328,7 @@ class GroupController extends Controller
             $group,
             $user,
             $approved,
-            Auth::user() // Quién procesó la solicitud
+            Auth::user() 
         ));
 
         return back()->with(

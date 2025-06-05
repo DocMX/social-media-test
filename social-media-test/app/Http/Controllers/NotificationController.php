@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    // Obtener notificaciones
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -18,7 +18,6 @@ class NotificationController extends Controller
             ->take(10)
             ->get()
             ->map(function ($notification) {
-                // Asegúrate que todos los campos necesarios estén presentes
                 $data = $notification->data;
 
                 return [
@@ -46,12 +45,11 @@ class NotificationController extends Controller
         ]);
     }
 
-    // Marcar una notificación como leída
+ 
     public function markAsRead(Request $request, string $notificationId)
     {
         $notification = DatabaseNotification::findOrFail($notificationId);
 
-        // Verificamos que la notificación le pertenezca al usuario
         if ($notification->notifiable_id !== $request->user()->id) {
             abort(403, 'No autorizado');
         }
@@ -61,7 +59,7 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
-    // Marcar todas como leídas
+  
     public function markAllAsRead(Request $request)
     {
         $request->user()->unreadNotifications->markAsRead();

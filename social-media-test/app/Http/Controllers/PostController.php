@@ -78,7 +78,6 @@ class PostController extends Controller
 
             DB::commit();
 
-            // Cargar relaciones necesarias
             $post->load(['attachments' => function ($query) {
                 $query->select(['id', 'post_id', 'path', 'mime', 'name', 'created_at']);
             }]);
@@ -90,7 +89,6 @@ class PostController extends Controller
                 Notification::send($users, new PostCreated($post, $user, $group));
             }
 
-            // Devolver el post creado con sus relaciones
             return redirect()->back()->with([
                 'post' => $post,
                 'message' => 'Post created successfully'
