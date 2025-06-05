@@ -23,9 +23,10 @@ const props = defineProps({
 const formErrors = ref({});
 const form = useForm({
     name: '',
-    auto_approval: true,
+    auto_approval: false,
     about: '',
 })
+console.log(form);
 
 const show = computed({
     get: () => props.modelValue,

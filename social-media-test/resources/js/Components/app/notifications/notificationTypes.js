@@ -123,6 +123,22 @@ export const notificationTypes = {
             "Invitado por": data.invited_by || "Administrador",
         }),
     },
+    group_join_request: {
+        icon: UserGroupIcon,
+        badge: {
+            text: "Solicitud",
+            class: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
+        },
+        bgClass: "bg-indigo-50 dark:bg-indigo-900/30",
+        iconClass: "text-indigo-500 group-hover:text-indigo-600 dark:text-indigo-400",
+        getTitle: () => "Solicitud para unirse al grupo",
+        getMessage: (data) => `Usuario "${data.user_name}" quiere unirse a "${data.group_name}"`,
+        getUrl: (data) => data.action_url || '#',
+        getMeta: (data) => ({
+            Grupo: data.group_name,
+            Solicitante: data.user_name,
+        }),
+    },
     group_invitation_approved: {
         icon: UserGroupIcon,
         badge: {

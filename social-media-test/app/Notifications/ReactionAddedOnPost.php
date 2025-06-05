@@ -6,13 +6,11 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Broadcasting\PrivateChannel;
 
-class ReactionAddedOnPost extends Notification implements ShouldQueue, ShouldBroadcast
+class ReactionAddedOnPost extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -31,7 +29,7 @@ class ReactionAddedOnPost extends Notification implements ShouldQueue, ShouldBro
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail', 'broadcast'];
+        return ['database', 'mail'];
     }
 
     /**
@@ -69,37 +67,10 @@ class ReactionAddedOnPost extends Notification implements ShouldQueue, ShouldBro
         ];
     }
 
-    /**
-     * Get the broadcast representation of the notification.
-     */
-    public function toBroadcast(object $notifiable): BroadcastMessage
-    {
-        return new BroadcastMessage([
-            'id' => $this->id,
-            'type' => 'post_reaction',
-            'data' => $this->toDatabase($notifiable),
-            'read_at' => null,
-            'created_at' => now()->toDateTimeString(),
-        ]);
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('user.'.$this->post->user_id);
-    }
-
-    /**
-     * Get the broadcast channel name.
-     */
-    public function broadcastAs()
-    {
-        return 'notification.created';
-    }
+    
+    
+   
+    
 
     /**
      * Get the URL for the post

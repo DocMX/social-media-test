@@ -25,6 +25,7 @@ use App\Notifications\RoleChanged;
 use App\Notifications\UserRemovedFromGroup;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -270,15 +271,22 @@ class GroupController extends Controller
 
     public function join(Group $group)
     {
-        $user = \request()->user();
+        dd($group);
+        $user = request()->user();
+        if ($group->hasApprovedUser($user->id)) {
+            return back()->with('info', 'You are already a member of this group.');
+        }
 
-        $status = GroupUserStatus::APPROVED->value;
-        $successMessage = 'You have joined to group "' . $group->name . '"';
         if (!$group->auto_approval) {
             $status = GroupUserStatus::PENDING->value;
 
             Notification::send($group->adminUsers, new RequestToJoinGroup($group, $user));
-            $successMessage = 'Your request has been accepted. You will be notified once you will be approved';
+
+            $successMessage = 'Your request has been sent. You will be notified once approved.';
+        } else {
+            $status = GroupUserStatus::APPROVED->value;
+
+            $successMessage = 'You have successfully joined the group "' . $group->name . '".';
         }
 
         GroupUser::create([

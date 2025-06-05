@@ -263,7 +263,7 @@ function updateGroup() {
                                            @click="joinToGroup">
                                 Join to Group
                             </PrimaryButton>
-                            <PrimaryButton v-if="authUser && !group.role && !group.auto_approval"
+                            <PrimaryButton v-if="authUser && !group.role && !group.auto_approval" 
                                            @click="joinToGroup">
                                 Request to join
                             </PrimaryButton>
