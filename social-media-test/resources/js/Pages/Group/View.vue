@@ -187,7 +187,7 @@ function leaveGroup() {
     form.post(route('group.leave', props.group.slug), {
         preserveScroll: true,
         onSuccess: () => {
-            // Forzar recarga para actualizar el estado del grupo
+            
             window.location.reload();
         }
     })
@@ -363,8 +363,10 @@ function leaveGroup() {
                                     authUser &&
                                     isJoinedToGroup &&
                                     !group.is_owner
+                                    
                                 "
                                 @click="leaveGroup"
+                                
                                 class="bg-red-500 hover:bg-red-600"
                             >
                                 Leave Group

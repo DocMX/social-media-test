@@ -397,14 +397,16 @@ class GroupController extends Controller
         return back();
     }
 
-    public function leaveGroup($slug): RedirectResponse
+    public function leaveGroup($slug)
     {
         $group = Group::where('slug', $slug)->firstOrFail();
         $userId = Auth::id();
 
-        // Verificar si el usuario es el dueño del grupo
-        if ($group->isOwner($userId)) {
-            return back()->with('error', 'No puedes abandonar el grupo porque eres el propietario. Debes transferir la propiedad o eliminar el grupo.');
+        if ($group->user_id === $userId) {
+            return back()->with([
+                'error' => 'Eres el propietario de este grupo. Transfiere la propiedad primero o elimina el grupo.',
+                'showOwnerError' => true // Bandera adicional para el frontend
+            ]);
         }
 
         // Buscar la relación del usuario con el grupo
