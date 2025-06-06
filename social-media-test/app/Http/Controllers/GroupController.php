@@ -271,7 +271,7 @@ class GroupController extends Controller
 
     public function join(Group $group)
     {
-        dd($group);
+        //dd($group);
         $user = request()->user();
         if ($group->hasApprovedUser($user->id)) {
             return back()->with('info', 'You are already a member of this group.');
