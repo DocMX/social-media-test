@@ -84,7 +84,7 @@ function resetCoverImage() {
     coverImageSrc.value = null;
 }
 
-function resetThurmbnailImage() {
+function resetThumbnailImage() {
     imagesForm.thumbnail = null;
     thumbnailImageSrc.value = null;
 }
@@ -107,7 +107,7 @@ function submitThurmbnailImage() {
         preserveScroll: true,
         onSuccess: () => {
             showNotification.value = true;
-            resetThurmbnailImage();
+            resetThumbnailImage();
             setTimeout(() => {
                 showNotification.value = false;
             }, 3000);
@@ -192,6 +192,8 @@ function leaveGroup() {
         }
     })
 }
+
+
 </script>
 
 <template>
