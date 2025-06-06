@@ -24,6 +24,7 @@ class StoreGroupRequest extends FormRequest
         return [
             'name' => ['required', 'max:255'],
             'auto_approval' => ['required', 'boolean'],
+            'privacy' => ['required',['public', 'private']],
             'about' => ['nullable']
         ];
     }

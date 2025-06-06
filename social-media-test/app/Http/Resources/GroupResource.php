@@ -33,6 +33,7 @@ class GroupResource extends JsonResource
 //            'deleted_by' => $this->deleted_by,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'privacy' => $this->privacy,
         ];
     }
 }
