@@ -79,4 +79,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->following()->where('user_id', $user->id)->exists();
     }
+    public function approvedGroups()
+    {
+        return $this->belongsToMany(Group::class, 'group_user')->wherePivot('approved', true);
+    }
 }

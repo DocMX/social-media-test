@@ -29,15 +29,20 @@ class HomeController extends Controller
                     ->where('gu.user_id', '=', $userId)
                     ->where('gu.status', GroupUserStatus::APPROVED->value);
             })
-             ->paginate(10);
+            ->where(function ($query) {
+                $query->whereNull('posts.group_id') // post público
+                    ->orWhereNotNull('gu.id');    // post en grupo al que el user fue aprobado
+            })
+            ->latest()
+            ->paginate(10);
 
         $posts = PostResource::collection($posts);
-         if ($request->wantsJson()) {
+        if ($request->wantsJson()) {
             return $posts;
         }
 
         $groups = Group::query()
-         ->with('currentUserGroup')
+            ->with('currentUserGroup')
             ->select(['groups.*'])
             ->join('group_users AS gu', 'gu.group_id', 'groups.id')
             ->where('gu.user_id', Auth::id())

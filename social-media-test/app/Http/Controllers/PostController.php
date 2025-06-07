@@ -415,10 +415,9 @@ class PostController extends Controller
 
     public function viewIndividual(Request $request, $post, $id)
     {
-        // Primero obtenemos el post, asegurándonos que el ID coincide
+        
         $post = Post::where('id', $id)->firstOrFail();
 
-        // Verificamos permisos del grupo (igual que en tu función view)
         if ($post->group_id && !$post->group->hasApprovedUser(Auth::id())) {
             return inertia('Error', [
                 'title' => 'Permission Denied',
@@ -426,7 +425,6 @@ class PostController extends Controller
             ])->toResponse($request)->setStatusCode(403);
         }
 
-        // Cargamos los conteos y relaciones (igual que en tu función view)
         $post->loadCount('reactions');
         $post->load([
             'comments' => function ($query) {

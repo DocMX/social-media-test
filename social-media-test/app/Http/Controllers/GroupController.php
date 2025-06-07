@@ -409,11 +409,11 @@ class GroupController extends Controller
         if ($group->user_id === $userId) {
             return back()->with([
                 'error' => 'Eres el propietario de este grupo. Transfiere la propiedad primero o elimina el grupo.',
-                'showOwnerError' => true // Bandera adicional para el frontend
+                'showOwnerError' => true 
             ]);
         }
 
-        // Buscar la relación del usuario con el grupo
+        
         $groupUser = GroupUser::where('user_id', $userId)
             ->where('group_id', $group->id)
             ->first();
@@ -424,10 +424,10 @@ class GroupController extends Controller
 
         try {
             DB::transaction(function () use ($groupUser, $group, $userId) {
-                // Eliminar la relación
+               
                 $groupUser->delete();
 
-                // Notificar a los administradores del grupo
+                
                 $admins = $group->adminUsers;
                 $leavingUser = Auth::user();
 
