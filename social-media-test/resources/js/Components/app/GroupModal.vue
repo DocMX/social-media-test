@@ -25,7 +25,7 @@ const form = useForm({
     name: '',
     auto_approval: false,
     about: '',
-    privacy: '',
+    privacy: 'public',
 })
 console.log(form);
 

@@ -34,7 +34,10 @@ const authUser = usePage().props.auth.user;
 
 const isCurrentUserAdmin = computed(() => props.group.role === "admin");
 const isJoinedToGroup = computed(
-    () => props.group.role && props.group.status === "approved" && !props.group.is_owner
+    () =>
+        props.group.role &&
+        props.group.status === "approved" &&
+        !props.group.is_owner
 );
 
 const props = defineProps({
@@ -55,7 +58,10 @@ const aboutForm = useForm({
     name: usePage().props.group.name,
     auto_approval: !!parseInt(usePage().props.group.auto_approval),
     about: usePage().props.group.about,
+    privacy: props.group.privacy || 'public',
 });
+
+
 
 function onCoverChange(event) {
     imagesForm.cover = event.target.files[0];
@@ -179,21 +185,18 @@ function updateGroup() {
 }
 
 function leaveGroup() {
-    if (!window.confirm('Are you sure you want to leave this group?')) {
+    if (!window.confirm("Are you sure you want to leave this group?")) {
         return false;
     }
 
-    const form = useForm({})
-    form.post(route('group.leave', props.group.slug), {
+    const form = useForm({});
+    form.post(route("group.leave", props.group.slug), {
         preserveScroll: true,
         onSuccess: () => {
-            
             window.location.reload();
-        }
-    })
+        },
+    });
 }
-
-
 </script>
 
 <template>
@@ -309,7 +312,7 @@ function leaveGroup() {
                                 class="absolute top-1 right-0 flex flex-col gap-2"
                             >
                                 <button
-                                    @click="resetThurmbnailImage"
+                                    @click="resetThumbnailImage"
                                     class="w-7 h-7 flex items-center justify-center bg-red-500/80 text-white rounded-full"
                                 >
                                     <XMarkIcon class="h-5 w-5" />
@@ -325,7 +328,19 @@ function leaveGroup() {
                         <div
                             class="flex justify-between items-center flex-1 p-4"
                         >
-                            <h2 class="font-bold text-lg">{{ group.name }}</h2>
+                            <div>
+                                <h2 class="font-bold text-lg">
+                                    {{ group.name }}
+                                </h2>
+                                <p class="text-sm text-gray-500">
+                                    Grupo
+                                    {{
+                                        group.privacy === "public"
+                                            ? "público"
+                                            : "privado"
+                                    }}
+                                </p>
+                            </div>
 
                             <PrimaryButton
                                 v-if="!authUser"
@@ -365,10 +380,8 @@ function leaveGroup() {
                                     authUser &&
                                     isJoinedToGroup &&
                                     !group.is_owner
-                                    
                                 "
                                 @click="leaveGroup"
-                                
                                 class="bg-red-500 hover:bg-red-600"
                             >
                                 Leave Group
