@@ -18,7 +18,6 @@ class UserController extends Controller
 
         $follower = Auth::user();
         
-        // Evitar auto-seguimiento
         if ($user->id === $follower->id) {
             return back()->with('error', 'No puedes seguirte a ti mismo');
         }
@@ -51,7 +50,6 @@ class UserController extends Controller
             $message = 'Dejaste de seguir a '.$user->username;
         }
 
-        // Enviar notificación solo si es un follow (no para unfollow)
         if ($followStatus) {
             $user->notify(new FollowUser($follower, true));
         }
