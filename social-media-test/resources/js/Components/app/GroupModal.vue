@@ -27,7 +27,7 @@ const form = useForm({
     about: '',
     privacy: 'public',
 })
-console.log(form);
+
 
 const show = computed({
     get: () => props.modelValue,

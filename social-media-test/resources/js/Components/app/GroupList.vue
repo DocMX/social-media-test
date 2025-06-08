@@ -3,7 +3,8 @@ import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 import GroupListItems from "@/Components/app/GroupListItems.vue";
 
 defineProps({
-    groups: Array
+    groups: Array,
+    recommendedGroups: Array,
 })
 
 </script>

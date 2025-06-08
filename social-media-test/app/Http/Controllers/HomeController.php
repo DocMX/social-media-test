@@ -10,6 +10,7 @@ use App\Models\Group;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -30,8 +31,8 @@ class HomeController extends Controller
                     ->where('gu.status', GroupUserStatus::APPROVED->value);
             })
             ->where(function ($query) {
-                $query->whereNull('posts.group_id') // post público
-                    ->orWhereNotNull('gu.id');    // post en grupo al que el user fue aprobado
+                $query->whereNull('posts.group_id')
+                    ->orWhereNotNull('gu.id');    
             })
             ->latest()
             ->paginate(10);
@@ -45,15 +46,31 @@ class HomeController extends Controller
             ->with('currentUserGroup')
             ->select(['groups.*'])
             ->join('group_users AS gu', 'gu.group_id', 'groups.id')
-            ->where('gu.user_id', Auth::id())
+            ->where('gu.user_id', $userId)
             ->orderBy('gu.role')
             ->orderBy('name', 'desc')
+            ->get();
+
+
+        $userGroupIds = DB::table('group_users')
+            ->where('user_id', $userId)
+            ->where('status', GroupUserStatus::APPROVED->value)
+            ->pluck('group_id')
+            ->toArray();
+
+        $recommendedGroups = Group::query()
+            ->where('privacy', Group::PRIVACY_PUBLIC)
+            ->whereNotIn('id', $userGroupIds)
+            ->withCount('approvedUsers')
+            ->orderBy('approved_users_count', 'desc')
+            ->take(5)
             ->get();
 
         return Inertia::render('Home', [
             'posts' => $posts,
             'groups' => GroupResource::collection($groups),
-            'followings' => UserResource::collection($user->followings)
+            'followings' => UserResource::collection($user->followings),
+            'recommendedGroups' => GroupResource::collection($recommendedGroups)
         ]);
     }
 }
