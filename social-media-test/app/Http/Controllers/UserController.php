@@ -56,4 +56,6 @@ class UserController extends Controller
 
         return back()->with('success', $message);
     }
+
+    //prueba ci cd para github
 }
