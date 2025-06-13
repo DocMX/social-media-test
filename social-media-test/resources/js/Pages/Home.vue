@@ -11,6 +11,7 @@ defineProps({
     groups: Array,
     followings: Array,
     recommendedGroups: Array,
+    //Agragar un nuewvo template al estilomde inicio mas suave
 });
 </script>
 
