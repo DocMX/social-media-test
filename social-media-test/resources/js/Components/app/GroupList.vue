@@ -6,7 +6,7 @@ defineProps({
     groups: Array,
     recommendedGroups: Array,
 })
-
+//odio ssr y me vale 
 </script>
 
 <template>
