@@ -124,7 +124,7 @@ function followUser() {
 
 <template>
     <AuthenticatedLayout>
-        <div class="max-w-[768px] mx-auto h-full overflow-auto">
+        <div class="max-w-full md:max-w-[768px] mx-auto h-full overflow-auto">
             <div class="px-4">
                 <div
                     v-show="showNotification && success"
@@ -220,7 +220,8 @@ function followUser() {
             </div>
             <div class="border-t m-4 mt-0">
                 <TabGroup>
-                    <TabList class="flex bg-white dark:bg-slate-950 dark:text-white">
+                    <TabList class="flex overflow-x-auto no-scrollbar whitespace-nowrap space-x-2 bg-white dark:bg-slate-950 dark:text-white px-2">
+
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Posts" :selected="selected"/>
                         </Tab>
@@ -292,5 +293,11 @@ function followUser() {
 </template>
 
 <style scoped>
-
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 </style>
