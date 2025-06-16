@@ -24,12 +24,13 @@ class PostResource extends JsonResource
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'user' => new UserResource($this->user),
-            'group' => new GroupResource($this->group),
+            'group' => $this->group ? new GroupResource($this->group) : null,
             'attachments' => PostAttachmentResource::collection($this->attachments),
             'num_of_reactions' => $this->reactions_count,
             'num_of_comments' => count($comments),
             'current_user_has_reaction' => $this->reactions->count() > 0,
-            'comments' => self::convertCommentsIntoTree($comments)
+            'comments' => self::convertCommentsIntoTree($comments),
+            //'is_recommended' => $this->when(isset($this->is_recommended), $this->is_recommended) : null,
         ];
     }
 

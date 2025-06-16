@@ -32,7 +32,11 @@ class HomeController extends Controller
             })
             ->where(function ($query) {
                 $query->whereNull('posts.group_id')
-                    ->orWhereNotNull('gu.id');    
+                    ->orWhereNotNull('gu.id');
+            })
+            ->where(function ($query) use ($userId) {
+                $query->whereNotNull('f.id') // sigues al autor
+                    ->orWhere('posts.user_id', $userId); // o es tuyo
             })
             ->latest()
             ->paginate(10);
@@ -71,6 +75,27 @@ class HomeController extends Controller
             'groups' => GroupResource::collection($groups),
             'followings' => UserResource::collection($user->followings),
             'recommendedGroups' => GroupResource::collection($recommendedGroups)
+        ]);
+
+        $recommendedPosts = Post::query()
+            ->select('posts.*')
+            ->whereNotIn('user_id', function ($query) use ($userId) {
+                $query->select('user_id')
+                    ->from('followers')
+                    ->where('follower_id', $userId);
+            })
+            ->where('user_id', '!=', $userId)
+            ->withCount('reactions')
+            ->orderBy('reactions_count', 'desc')
+            ->take(5)
+            ->get();
+
+            return Inertia::render('Home', [
+            'posts' => $posts,
+            'groups' => GroupResource::collection($groups),
+            'followings' => UserResource::collection($user->followings),
+            'recommendedGroups' => GroupResource::collection($recommendedGroups),
+            'recommendedPosts' => PostResource::collection($recommendedPosts), // ← esto nuevo
         ]);
     }
 }
