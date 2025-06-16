@@ -13,14 +13,24 @@ export default function useNotifications() {
         try {
             isLoading.value = true;
             const response = await axios.get(route("notifications"));
-            const oldIds = notifications.value.map((n) => n.id);
-            const newIds = response.data.notifications.map((n) => n.id);
+            const oldUnreadIds = notifications.value
+                .filter((n) => !n.read_at)
+                .map((n) => n.id);
 
-            // Detectar si hay alguna nueva que no estaba antes
-            const hasNew = newIds.some((id) => !oldIds.includes(id));
-            notifications.value = response.data.notifications;
+            const newUnread = response.data.notifications.filter(
+                (n) => !n.read_at
+            );
+            const newUnreadIds = newUnread.map((n) => n.id);
+
+            // Detecta si hay una notificación nueva no leída
+            const hasNewUnread = newUnreadIds.some(
+                (id) => !oldUnreadIds.includes(id)
+            );
+
+            notifications.value.splice(0, notifications.value.length, ...response.data.notifications);
+
             unreadCount.value = response.data.unread_count;
-            if (hasNew) {
+            if (hasNewUnread) {
                 audio
                     .play()
                     .catch((err) =>
