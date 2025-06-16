@@ -29,7 +29,7 @@ class ReactionAddedOnComment extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -37,22 +37,26 @@ class ReactionAddedOnComment extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return ( new MailMessage )
+        return (new MailMessage)
             ->line('User "' . $this->user->username . '" has liked your comment. Your comment: ')
-            ->line('"'.$this->comment->comment.'"')
+            ->line('"' . $this->comment->comment . '"')
             ->action('View Post', url(route('post.view', $this->post->id)))
             ->line('Thank you for using our application!');
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+
+
+    public function toDatabase($notifiable): array
     {
         return [
-            //
+            'type' => 'comment_reaction',
+            'comment_excerpt' => str()->limit($this->comment->comment, 50),
+            'post_id' => $this->post->id,
+            'post_slug' => $this->post->slug ?? null,
+            'user_id' => $this->user->id,
+            'user_username' => $this->user->username,
+            'user_name' => $this->user->name,
+            'comment_author' => $this->comment->user->name,
         ];
     }
 }

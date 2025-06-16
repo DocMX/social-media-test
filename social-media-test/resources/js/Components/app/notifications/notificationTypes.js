@@ -106,6 +106,24 @@ export const notificationTypes = {
                 id: data.post_id,
             }),
     },
+    comment_reaction: {
+        icon: BellIcon,
+        badge: {
+            text: "Reacción",
+            class: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
+        },
+        bgClass: "bg-pink-50 dark:bg-pink-900/30",
+        iconClass: "text-pink-500 group-hover:text-pink-600 dark:text-pink-400",
+        getTitle: () => "Le gustó tu comentario",
+        getMessage: (data) =>
+            `${data.user_username} reaccionó a tu comentario: "${data.comment_excerpt}"`,
+        getUrl: (data) =>
+            route("post.viewIndividual", {
+                post: data.post_slug || data.post_id,
+                id: data.post_id,
+            }),
+    },
+
     group_invitation: {
         icon: UserGroupIcon,
         badge: {
@@ -130,10 +148,12 @@ export const notificationTypes = {
             class: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
         },
         bgClass: "bg-indigo-50 dark:bg-indigo-900/30",
-        iconClass: "text-indigo-500 group-hover:text-indigo-600 dark:text-indigo-400",
+        iconClass:
+            "text-indigo-500 group-hover:text-indigo-600 dark:text-indigo-400",
         getTitle: () => "Solicitud para unirse al grupo",
-        getMessage: (data) => `Usuario "${data.user_name}" quiere unirse a "${data.group_name}"`,
-        getUrl: (data) => data.action_url || '#',
+        getMessage: (data) =>
+            `Usuario "${data.user_name}" quiere unirse a "${data.group_name}"`,
+        getUrl: (data) => data.action_url || "#",
         getMeta: (data) => ({
             Grupo: data.group_name,
             Solicitante: data.user_name,
