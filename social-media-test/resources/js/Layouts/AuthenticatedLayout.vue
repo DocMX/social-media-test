@@ -15,21 +15,28 @@ const keywords = ref(usePage().props.search || "");
 
 
 const authUser = usePage().props.auth.user;
+onMounted(() => {
+  const html = document.documentElement
+  const prefersDark = localStorage.getItem('darkMode') === '1'
+  if (prefersDark) {
+    html.classList.add('dark')
+  } else {
+    html.classList.remove('dark')
+  }
+})
 
 function search() {
     router.get(route("search", encodeURIComponent(keywords.value)));
 }
 
 function toggleDarkMode() {
-    const html = window.document.documentElement;
-    if (html.classList.contains("dark")) {
-        html.classList.remove("dark");
-        localStorage.setItem("darkMode", "0");
-    } else {
-        html.classList.add("dark");
-        localStorage.setItem("darkMode", "1");
-    }
+  const html = document.documentElement
+  const isDark = html.classList.contains('dark')
+
+  html.classList.toggle('dark', !isDark)
+  localStorage.setItem('darkMode', isDark ? '0' : '1')
 }
+
 
 
 </script>
