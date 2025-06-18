@@ -34,6 +34,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Http\Enums\GroupPrivacyEnum;
 
 class GroupController extends Controller
 {
@@ -45,7 +46,7 @@ class GroupController extends Controller
 
         $isMember = $group->hasApprovedUser($userId);
 
-        if ($isMember || $group->privacy === 'public') {
+        if ($isMember || $group->privacy === GroupPrivacyEnum::PRIVACY_PUBLIC) {
             $posts = Post::postsForTimeline($userId, false)
                 ->leftJoin('groups AS g', 'g.pinned_post_id', 'posts.id')
                 ->where('group_id', $group->id)

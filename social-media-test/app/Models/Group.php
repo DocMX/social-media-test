@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Enums\GroupPrivacyEnum;
 use App\Http\Enums\GroupUserRole;
 use App\Http\Enums\GroupUserStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,11 +27,9 @@ class Group extends Model
     ];
 
     protected $casts = [
-        'privacy' => 'string',
+        'privacy' => GroupPrivacyEnum::class,
         'auto_approval' => 'boolean'
     ];
-    public const PRIVACY_PUBLIC = 'public';
-    public const PRIVACY_PRIVATE = 'private';
 
     public function getSlugOptions(): SlugOptions
     {
