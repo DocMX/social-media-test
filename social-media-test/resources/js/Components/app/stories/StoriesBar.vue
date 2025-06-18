@@ -2,11 +2,13 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from '@/axiosClient';
 import StoriesModal from './StoriesModal.vue';
+import CreateStory from './CreateStory.vue';
 
 const storiesByUser = ref({});
 const selectedUserIndex = ref(0);
 const currentIndex = ref(0);
 const showModal = ref(false);
+const showCreateModal = ref(false);
 
 const users = computed(() => Object.values(storiesByUser.value));
 
@@ -57,7 +59,31 @@ onMounted(fetchStories);
 </script>
 
 <template>
+  <!-- Modal Crear Historia -->
+  <CreateStory v-if="showCreateModal" @close="showCreateModal = false" />
+
+  <!-- Barra de historias -->
   <div class="flex gap-3 overflow-x-auto p-3 bg-white dark:bg-slate-900 rounded shadow mb-4">
+    <!-- Botón Crear Historia -->
+    <div
+      class="flex flex-col items-center min-w-[80px] max-w-[80px] cursor-pointer"
+      @click="showCreateModal = true"
+    >
+      <div class="w-16 h-16 rounded-full border-2 border-blue-600 flex items-center justify-center bg-blue-100 hover:bg-blue-200">
+        <svg
+          class="w-6 h-6 text-blue-600"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </div>
+      <p class="text-xs mt-1 text-center text-blue-600 dark:text-blue-400">Crear</p>
+    </div>
+
+    <!-- Historias de usuarios -->
     <div
       v-for="(userStories, idx) in users"
       :key="userStories[0]?.user?.id || idx"
@@ -74,6 +100,7 @@ onMounted(fetchStories);
     </div>
   </div>
 
+  <!-- Modal Ver historias -->
   <StoriesModal
     v-if="showModal"
     :users="users"

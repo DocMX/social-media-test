@@ -31,6 +31,7 @@ const coverImageSrc = ref("");
 const avatarImageSrc = ref("");
 const searchFollowersKeyword = ref("");
 const searchFollowingsKeyword = ref("");
+const showCreateStory = ref(false);
 const authUser = usePage().props.auth.user;
 
 const isMyProfile = computed(() => authUser && authUser.id === props.user.id);
@@ -260,9 +261,18 @@ function followUser() {
                                     {{ followerCount }} follower(s)
                                 </p>
                             </div>
-                            <div v-if="isMyProfile" class="mt-2">
-                                <CreateStory />
-                            </div>
+                            <PrimaryButton
+                                v-if="isMyProfile"
+                                class="mt-4"
+                                @click="showCreateStory = true"
+                            >
+                                Crear historia
+                            </PrimaryButton>
+                            <CreateStory
+                                v-if="showCreateStory"
+                                @close="showCreateStory = false"
+                            />
+
                             <div v-if="!isMyProfile">
                                 <PrimaryButton
                                     v-if="!isCurrentUserFollower"
