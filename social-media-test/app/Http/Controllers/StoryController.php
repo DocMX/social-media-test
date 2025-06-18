@@ -13,10 +13,26 @@ class StoryController extends Controller
             ->where('expires_at', '>', now())
             ->latest()
             ->get()
-            ->groupBy('user_id');
+            ->groupBy('user_id')
+            ->map(function ($userStories) {
+                return $userStories->map(function ($story) {
+                    return [
+                        'id' => $story->id,
+                        'user' => [
+                            'id' => $story->user->id,
+                            'name' => $story->user->name,
+                            'avatar' => $story->user->profile_photo_url,
+                        ],
+                        'created_at' => $story->created_at,
+                        'image' => $story->media_type === 'image' ? asset('storage/' . $story->media_path) : null,
+                        'video' => $story->media_type === 'video' ? asset('storage/' . $story->media_path) : null,
+                    ];
+                });
+            });
 
         return response()->json($stories);
     }
+
 
     public function store(Request $request)
     {

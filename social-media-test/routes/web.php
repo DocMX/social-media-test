@@ -120,8 +120,8 @@ Route::middleware('auth')->group(function () {
         ->name('search');
 
     //Stories
-    Route::get('/stories', [StoryController::class, 'index']);
-    Route::post('/stories', [StoryController::class, 'store']);
+    Route::get('/stories', [StoryController::class, 'index'])->name('stories');
+    Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
 });
 
 require __DIR__ . '/auth.php';

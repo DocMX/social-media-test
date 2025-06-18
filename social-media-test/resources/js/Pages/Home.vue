@@ -5,6 +5,8 @@ import FollowingList from "@/Components/app/FollowingList.vue";
 import CreatePost from "@/Components/app/CreatePost.vue";
 import PostList from "@/Components/app/PostList.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import StoriesBar from "@/Components/app/stories/StoriesBar.vue";
+
 
 defineProps({
     posts: Object,
@@ -31,6 +33,7 @@ defineProps({
             <div
                 class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col"
             >
+                <StoriesBar />
                 <CreatePost />
                 <PostList :posts="posts.data" class="flex-1" />
             </div>
