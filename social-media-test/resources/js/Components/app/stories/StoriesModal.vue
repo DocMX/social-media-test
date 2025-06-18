@@ -1,5 +1,8 @@
 <script setup>
 import { defineProps, defineEmits, watch, ref, onMounted } from 'vue';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const props = defineProps({
   users: Array,
@@ -16,6 +19,12 @@ let timer = null;
 const getCurrentStory = () => {
   const userStories = props.users[props.selectedUserIndex] || [];
   return userStories[props.currentIndex] || null;
+};
+
+const isStoryActive = (createdAt) => {
+  const created = dayjs(createdAt);
+  const now = dayjs();
+  return now.diff(created, 'hour') < 24;
 };
 
 const startTimer = () => {
@@ -40,14 +49,18 @@ watch(
   () => [props.selectedUserIndex, props.currentIndex],
   () => {
     story.value = getCurrentStory();
-    if (story.value) startTimer();
+    if (story.value && isStoryActive(story.value.created_at)) {
+      startTimer();
+    } else {
+      emit('next');
+    }
   },
   { immediate: true }
 );
 </script>
 
 <template>
-  <div v-if="story" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+  <div v-if="story && isStoryActive(story.created_at)" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
     <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl p-4 shadow-lg">
       <button @click="emit('close')" class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
 
@@ -69,9 +82,14 @@ watch(
           :src="story.user?.avatar || '/img/default-avatar.jpg'"
           class="w-10 h-10 rounded-full object-cover border-2 border-sky-500"
         />
-        <span class="text-sm font-semibold text-gray-800 dark:text-white">
-          {{ story.user?.name || 'Usuario' }}
-        </span>
+        <div>
+          <span class="block text-sm font-semibold text-gray-800 dark:text-white">
+            {{ story.user?.name || 'Usuario' }}
+          </span>
+          <span class="text-xs text-gray-500 dark:text-gray-400">
+            {{ dayjs(story.created_at).fromNow() }}
+          </span>
+        </div>
       </div>
 
       <div class="flex justify-center">
