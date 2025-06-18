@@ -68,7 +68,7 @@ onMounted(fetchStories);
         :src="userStories[0]?.user?.avatar || '/img/default-avatar.jpg'"
         class="w-16 h-16 rounded-full object-cover border-2 border-sky-500"
       />
-      <p class="text-xs text-center mt-1 truncate w-full">
+      <p class="text-xs text-white text-center mt-1 truncate w-full">
         {{ userStories[0]?.user?.name || 'Usuario' }}
       </p>
     </div>

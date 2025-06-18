@@ -122,6 +122,8 @@ Route::middleware('auth')->group(function () {
     //Stories
     Route::get('/stories', [StoryController::class, 'index'])->name('stories');
     Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
+    Route::post('/stories/view', [StoryController::class, 'markAsViewed'])->name('stories.view');
+
 });
 
 require __DIR__ . '/auth.php';

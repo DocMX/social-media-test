@@ -41,7 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
-        
+
     ];
 
     /**
@@ -91,5 +91,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->avatar_path
             ? Storage::url($this->avatar_path)
             : asset('/img/default-avatar.jpg');
+    }
+
+    public function viewedStories()
+    {
+        return $this->hasMany(StoryView::class);
     }
 }
