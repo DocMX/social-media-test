@@ -3,6 +3,7 @@
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StoryController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SearchController;
@@ -117,6 +118,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/search/{search?}', [SearchController::class, 'search'])
         ->name('search');
+
+    //Stories
+    Route::get('/stories', [StoryController::class, 'index']);
+    Route::post('/stories', [StoryController::class, 'store']);
 });
 
 require __DIR__ . '/auth.php';
