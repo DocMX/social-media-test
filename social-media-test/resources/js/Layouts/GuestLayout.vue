@@ -4,12 +4,12 @@ import { Link } from '@inertiajs/vue3'
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col justify-between px-4">
+  <div class="min-h-screen bg-black dark:bg-black flex flex-col justify-between px-4">
     <!-- Contenido principal centrado -->
     <div class="flex-grow flex items-center justify-center">
-      <div class="flex flex-col md:flex-row items-center bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden max-w-4xl w-full">
+      <div class="flex flex-col md:flex-row items-center bg-white dark:bg-black shadow-md rounded-lg overflow-hidden max-w-4xl w-full">
         <!-- Imagen a la izquierda -->
-        <div class="hidden md:block w-1/2 bg-gray-200 dark:bg-gray-700">
+        <div class="hidden md:block w-1/2 bg-black dark:bg-black">
           <img
             src="/img/web-lox-image-2x.png"
             alt="Instagram Preview"
