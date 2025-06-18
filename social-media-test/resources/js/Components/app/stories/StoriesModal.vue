@@ -1,69 +1,106 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, watch, ref, onMounted } from 'vue';
 
 const props = defineProps({
-    story: Object,
-    show: Boolean,
+  users: Array,
+  selectedUserIndex: Number,
+  currentIndex: Number
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'update:index', 'next', 'prev']);
+
+const story = ref(null);
+const progressArray = ref([]);
+let timer = null;
+
+const getCurrentStory = () => {
+  const userStories = props.users[props.selectedUserIndex] || [];
+  return userStories[props.currentIndex] || null;
+};
+
+const startTimer = () => {
+  clearInterval(timer);
+  const userStories = props.users[props.selectedUserIndex] || [];
+
+  progressArray.value = userStories.map((_, idx) => {
+    return idx < props.currentIndex ? 100 : idx === props.currentIndex ? 0 : 0;
+  });
+
+  timer = setInterval(() => {
+    if (progressArray.value[props.currentIndex] < 100) {
+      progressArray.value[props.currentIndex]++;
+    } else {
+      clearInterval(timer);
+      emit('next');
+    }
+  }, 50);
+};
+
+watch(
+  () => [props.selectedUserIndex, props.currentIndex],
+  () => {
+    story.value = getCurrentStory();
+    if (story.value) startTimer();
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
-    <div
-        v-if="show"
-        class="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-    >
+  <div v-if="story" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+    <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl p-4 shadow-lg">
+      <button @click="emit('close')" class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">&times;</button>
+
+      <div class="flex gap-1 mb-3">
         <div
-            class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg max-w-md w-full relative"
+          v-for="(s, i) in props.users[props.selectedUserIndex] || []"
+          :key="i"
+          class="flex-1 h-1 bg-gray-300 rounded overflow-hidden"
         >
-            <!-- Botón de cerrar -->
-            <button
-                @click="emit('close')"
-                class="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-xl"
-            >
-                &times;
-            </button>
-
-            <div v-if="story">
-                <!-- Header con avatar y nombre -->
-                <div class="flex items-center gap-3 mb-4">
-                    <img
-                        :src="story.user.avatar || '/img/default_avatar.webp'"
-                        alt="Avatar"
-                        class="w-10 h-10 rounded-full object-cover border-2 border-sky-500"
-                    />
-                    <h2 class="text-md font-semibold text-gray-800 dark:text-white">
-                        {{ story.user.name }}
-                    </h2>
-                </div>
-
-                <!-- Imagen o video -->
-                <div class="flex justify-center">
-                    <img
-                        v-if="story.media_type === 'image'"
-                        :src="`/storage/${story.media_path}`"
-                        class="rounded-lg w-full max-h-[400px] object-contain"
-                    />
-
-                    <video
-                        v-else-if="story.media_type === 'video'"
-                        controls
-                        class="rounded-lg w-full max-h-[400px] object-contain"
-                    >
-                        <source :src="`/storage/${story.media_path}`" type="video/mp4" />
-                        Tu navegador no soporta videos.
-                    </video>
-                </div>
-
-                <!-- Descripción -->
-                <p
-                    v-if="story.caption"
-                    class="mt-3 text-sm text-center text-gray-500 dark:text-gray-300"
-                >
-                    {{ story.caption }}
-                </p>
-            </div>
+          <div
+            class="h-full bg-blue-500 transition-all duration-100 linear"
+            :style="{ width: `${progressArray[i] || 0}%` }"
+          ></div>
         </div>
+      </div>
+
+      <div class="flex items-center gap-3 mb-4">
+        <img
+          :src="story.user?.avatar || '/img/default-avatar.jpg'"
+          class="w-10 h-10 rounded-full object-cover border-2 border-sky-500"
+        />
+        <span class="text-sm font-semibold text-gray-800 dark:text-white">
+          {{ story.user?.name || 'Usuario' }}
+        </span>
+      </div>
+
+      <div class="flex justify-center">
+        <img
+          v-if="story.media_type === 'image'"
+          :src="`/storage/${story.media_path}`"
+          class="rounded-lg w-full max-h-[400px] object-contain cursor-pointer"
+          @click="emit('next')"
+        />
+        <video
+          v-else-if="story.media_type === 'video'"
+          autoplay
+          muted
+          playsinline
+          @ended="emit('next')"
+          class="rounded-lg w-full max-h-[400px] object-contain"
+        >
+          <source :src="`/storage/${story.media_path}`" type="video/mp4" />
+        </video>
+      </div>
+
+      <p v-if="story.caption" class="mt-3 text-sm text-center text-gray-500 dark:text-gray-300">
+        {{ story.caption }}
+      </p>
+
+      <div class="flex justify-between mt-4 text-sm text-blue-500">
+        <button @click="emit('prev')">&laquo; Anterior</button>
+        <button @click="emit('next')">Siguiente &raquo;</button>
+      </div>
     </div>
+  </div>
 </template>
