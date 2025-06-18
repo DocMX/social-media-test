@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -40,6 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        
     ];
 
     /**
@@ -82,5 +84,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function approvedGroups()
     {
         return $this->belongsToMany(Group::class, 'group_user')->wherePivot('approved', true);
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar_path
+            ? Storage::url($this->avatar_path)
+            : asset('/img/default-avatar.jpg');
     }
 }

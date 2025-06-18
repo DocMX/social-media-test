@@ -8,11 +8,13 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import StoriesBar from "@/Components/app/stories/StoriesBar.vue";
 
 
+
 defineProps({
     posts: Object,
     groups: Array,
     followings: Array,
     recommendedGroups: Array,
+    stories: Object,
     //Agragar un nuewvo template al estilomde inicio mas suave
 });
 </script>
@@ -33,7 +35,7 @@ defineProps({
             <div
                 class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col"
             >
-                <StoriesBar />
+                <StoriesBar :stories="stories" />
                 <CreatePost />
                 <PostList :posts="posts.data" class="flex-1" />
             </div>
