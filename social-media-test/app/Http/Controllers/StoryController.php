@@ -15,7 +15,16 @@ class StoryController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
+
+        $followedUserIds = $user->followings()->pluck('users.id');
+
+        // 👇 Esto viene después de definirla
+        $followedUserIds->push($user->id);
+
+        // Filtrar historias solo de los usuarios seguidos (y que no hayan expirado)
         $stories = Story::with('user')
+            ->whereIn('user_id', $followedUserIds)
             ->where('expires_at', '>', now())
             ->withCount('views')
             ->latest()

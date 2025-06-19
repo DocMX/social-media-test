@@ -55,7 +55,12 @@ const prevStory = () => {
   }
 };
 
-onMounted(fetchStories);
+onMounted(() => {
+  fetchStories();
+
+  // Refrescar cada 30 segundos
+  setInterval(fetchStories, 30000);
+});
 </script>
 
 <template>
