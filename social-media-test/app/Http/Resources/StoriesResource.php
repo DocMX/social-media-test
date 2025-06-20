@@ -23,6 +23,7 @@ class StoriesResource extends JsonResource
                 'avatar' => $this->user->avatar_url,
             ],
             'views_count' => $this->user_id === auth()->id() ? $this->views_count : null,
+            'viewed' => $this->viewers->isNotEmpty(),
         ];
     }
 }

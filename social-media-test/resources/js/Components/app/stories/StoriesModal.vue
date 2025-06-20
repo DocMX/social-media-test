@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, watch, ref, onMounted } from "vue";
+import { defineProps, defineEmits, watch, ref, nextTick } from "vue";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
@@ -11,11 +11,19 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close", "update:index", "next", "prev"]);
+const videoRef = ref(null);
 
 const story = ref(null);
 const progressArray = ref([]);
 let timer = null;
+const isMuted = ref(true);
 
+const toggleMute = () => {
+    isMuted.value = !isMuted.value;
+    if (videoRef.value) {
+        videoRef.value.muted = isMuted.value;
+    }
+};
 const getCurrentStory = () => {
     const userStories = props.users[props.selectedUserIndex] || [];
     return userStories[props.currentIndex] || null;
@@ -60,7 +68,11 @@ const markAsViewed = async (storyId) => {
 watch(
     () => [props.selectedUserIndex, props.currentIndex],
     async () => {
-        story.value = getCurrentStory();
+        const newStory = getCurrentStory();
+        story.value = null; // ← Forzar limpieza para que Vue reactive el cambio
+        await nextTick(); // ← Espera a que el DOM actualice
+        story.value = newStory;
+
         if (story.value && isStoryActive(story.value.created_at)) {
             await markAsViewed(story.value.id);
             startTimer();
@@ -117,7 +129,7 @@ watch(
                 </div>
             </div>
 
-            <div class="flex justify-center">
+            <div class="flex justify-center relative">
                 <img
                     v-if="story.media_type === 'image'"
                     :src="`/storage/${story.media_path}`"
@@ -126,8 +138,11 @@ watch(
                 />
                 <video
                     v-else-if="story.media_type === 'video'"
+                    ref="videoRef"
+                    :key="story.id"
                     autoplay
                     playsinline
+                    :muted="isMuted"
                     @ended="emit('next')"
                     class="rounded-lg w-full max-h-[400px] object-contain"
                 >
@@ -136,6 +151,46 @@ watch(
                         type="video/mp4"
                     />
                 </video>
+                <div
+                    v-if="story.media_type === 'video'"
+                    class="absolute top-4 right-4 z-10"
+                >
+                    <button
+                        @click="toggleMute"
+                        class="bg-black/60 p-2 rounded-full text-white hover:bg-black/80 transition"
+                    >
+                        <svg
+                            v-if="isMuted"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-6 h-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 10l4.553-4.553a1 1 0 00-1.414-1.414L13.586 10H10.414l-2.293-2.293a1 1 0 00-1.707.707V16a1 1 0 001.707.707L10.414 14h3.172l4.553 4.553a1 1 0 001.414-1.414L15 14v-4z"
+                            />
+                        </svg>
+                        <svg
+                            v-else
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-6 h-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5v14l11-7z"
+                            />
+                        </svg>
+                    </button>
+                </div>
             </div>
             <p
                 v-if="story.views_count !== null"

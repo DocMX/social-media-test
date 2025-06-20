@@ -16,4 +16,9 @@ class Story extends Model
     {
         return $this->hasMany(StoryView::class);
     }
+    public function viewers()
+    {
+        return $this->belongsToMany(User::class, 'story_views')
+            ->withPivot('viewed_at');
+    }
 }
