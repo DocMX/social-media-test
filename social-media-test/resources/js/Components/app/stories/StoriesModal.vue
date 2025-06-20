@@ -127,7 +127,6 @@ watch(
                 <video
                     v-else-if="story.media_type === 'video'"
                     autoplay
-                    muted
                     playsinline
                     @ended="emit('next')"
                     class="rounded-lg w-full max-h-[400px] object-contain"

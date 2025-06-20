@@ -23,7 +23,7 @@ class StoreStoriesRequest extends FormRequest
             'media' => [
                 'required',
                 'file',
-                'max:10240', // 10 MB
+                'max:51200',// 10 MB
                 File::types(self::$extensions),
             ],
             'caption' => ['nullable', 'string', 'max:255'],
@@ -35,7 +35,7 @@ class StoreStoriesRequest extends FormRequest
         return [
             'media.required' => 'Debes subir una imagen o video.',
             'media.file' => 'El archivo debe ser válido.',
-            'media.max' => 'El archivo no puede pesar más de 10 MB.',
+            'media.max' => 'El archivo no puede pesar más de 50 MB.',
             'media.mimes' => 'Tipo de archivo no permitido.',
         ];
     }
