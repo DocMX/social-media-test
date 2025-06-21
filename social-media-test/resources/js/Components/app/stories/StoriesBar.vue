@@ -20,6 +20,9 @@ const fetchStories = async () => {
         console.error("Error al cargar historias:", e);
     }
 };
+const isFullyViewed = (userStories) => {
+    return userStories.every((story) => story.has_been_viewed);
+};
 
 const openStory = (userIdx) => {
     selectedUserIndex.value = userIdx;
@@ -107,17 +110,24 @@ onMounted(() => {
             class="flex flex-col items-center min-w-[80px] max-w-[80px] cursor-pointer"
             @click="openStory(idx)"
         >
-            <img
-                :src="userStories[0]?.user?.avatar || '/img/default-avatar.jpg'"
+            <div
                 :class="[
-                    'w-16 h-16 rounded-full object-cover border-2',
-                    userStories.some((story) => story.viewed)
-                        ? 'border-gray-400'
-                        : 'border-sky-500',
+                    'p-[2px] rounded-full transition-all duration-500',
+                    isFullyViewed(userStories) ? 'bg-gray-300' : 'story-ring',
                 ]"
-            />
+            >
+                <img
+                    :src="
+                        userStories[0]?.user?.avatar ||
+                        '/img/default-avatar.jpg'
+                    "
+                    class="w-16 h-16 rounded-full object-cover"
+                />
+            </div>
 
-            <p class="text-xs text-white text-center mt-1 truncate w-full">
+            <p
+                class="text-xs text-center mt-1 truncate w-full text-gray-800 dark:text-white"
+            >
                 {{ userStories[0]?.user?.name || "Usuario" }}
             </p>
         </div>
@@ -135,3 +145,15 @@ onMounted(() => {
         @prev="prevStory"
     />
 </template>
+
+<style>
+.story-ring {
+    background: conic-gradient(from 180deg, #d62976, #fa7e1e, #feda75, #d62976);
+    padding: 2px;
+    border-radius: 9999px;
+}
+
+.story-ring.viewed {
+    background: #d1d5db; /* gray-300 */
+}
+</style>

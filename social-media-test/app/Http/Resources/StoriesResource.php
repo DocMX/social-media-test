@@ -24,6 +24,7 @@ class StoriesResource extends JsonResource
             ],
             'views_count' => $this->user_id === auth()->id() ? $this->views_count : null,
             'viewed' => $this->viewers->isNotEmpty(),
+            'has_been_viewed' => $this->views()->where('user_id', auth()->id())->exists(),
         ];
     }
 }
