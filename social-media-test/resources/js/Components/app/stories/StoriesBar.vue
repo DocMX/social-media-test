@@ -72,7 +72,7 @@ onMounted(() => {
 
     <!-- Barra de historias -->
     <div
-        class="flex gap-3 overflow-x-auto p-3 bg-white dark:bg-slate-900 rounded shadow mb-4"
+        class="flex gap-4 overflow-x-auto px-4 py-3 bg-gray-50 dark:bg-dark-bg rounded-xl shadow-md backdrop-blur-sm"
     >
         <!-- Botón Crear Historia -->
         <div
@@ -80,7 +80,7 @@ onMounted(() => {
             @click="showCreateModal = true"
         >
             <div
-                class="w-16 h-16 rounded-full border-2 border-blue-600 flex items-center justify-center bg-blue-100 hover:bg-blue-200"
+                class="w-16 h-16 rounded-full border-2 border-blue-600 flex items-center justify-center bg-blue-100 dark:bg-dark-card hover:bg-blue-200 dark:hover:bg-dark-muted"
             >
                 <svg
                     class="w-6 h-6 text-blue-600"
@@ -113,7 +113,9 @@ onMounted(() => {
             <div
                 :class="[
                     'p-[2px] rounded-full transition-all duration-500',
-                    isFullyViewed(userStories) ? 'bg-gray-300' : 'story-ring',
+                    isFullyViewed(userStories)
+                        ? 'bg-gray-300 dark:bg-dark-muted'
+                        : 'story-ring',
                 ]"
             >
                 <img
@@ -121,7 +123,7 @@ onMounted(() => {
                         userStories[0]?.user?.avatar ||
                         '/img/default-avatar.jpg'
                     "
-                    class="w-16 h-16 rounded-full object-cover"
+                    class="w-16 h-16 rounded-full object-cover shadow-md hover:scale-105 transition-transform duration-300"
                 />
             </div>
 

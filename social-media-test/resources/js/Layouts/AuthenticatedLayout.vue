@@ -43,10 +43,10 @@ function toggleDarkMode() {
 
 <template>
     <div
-        class="h-full overflow-hidden flex flex-col bg-gray-100 dark:bg-gray-800"
+        class="h-full overflow-hidden flex flex-col bg-gray-100 dark:bg-dark-bg"
     >
         <nav
-            class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700"
+            class="bg-white dark:bg-dark-card border-b border-gray-100 dark:border-dark-border"
         >
             
             <!-- Primary Navigation Menu -->
@@ -57,7 +57,7 @@ function toggleDarkMode() {
                         <div class="shrink-0 flex items-center">
                             <Link :href="route('dashboard')">
                                 <ApplicationLogo
-                                    class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"
+                                    class="block h-9 w-auto fill-current text-gray-800 dark:text-dark-text"
                                 />
                             </Link>
                         </div>
@@ -67,11 +67,11 @@ function toggleDarkMode() {
                         <TextInput
                             v-model="keywords"
                             placeholder="Search on the website"
-                            class="w-full"
+                            class="w-full dark:bg-dark-input dark:border-dark-border dark:text-dark-text"
                             @keyup.enter="search"
                         />
 
-                        <button @click="toggleDarkMode" class="dark:text-white">
+                        <button @click="toggleDarkMode" class="text-gray-700 dark:text-dark-text">
                             <MoonIcon class="w-5 h-5" />
                         </button>
                          <!-- Componente de Notificaciones -->
@@ -87,7 +87,7 @@ function toggleDarkMode() {
                                     <span class="inline-flex rounded-md">
                                         <button
                                             type="button"
-                                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
+                                            class="inline-flex items-center px-3 py-2 text-sm rounded-md text-gray-500 dark:text-dark-text bg-white dark:bg-dark-card hover:text-gray-700 dark:hover:text-gray-200"
                                         >
                                             {{ authUser.name }}
 
@@ -129,7 +129,7 @@ function toggleDarkMode() {
                             <div v-else>
                                 <Link
                                     :href="route('login')"
-                                    class="dark:text-gray-100"
+                                    class="dark:text-dark-text"
                                 >
                                     Login
                                 </Link>
@@ -229,14 +229,14 @@ function toggleDarkMode() {
         </nav>
 
         <!-- Page Heading -->
-        <header class="bg-white dark:bg-gray-800 shadow" v-if="$slots.header">
+        <header class="bg-white dark:bg-dark-card shadow" v-if="$slots.header">
             <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                 <slot name="header" />
             </div>
         </header>
 
         <!-- Page Content -->
-        <main class="flex-1 overflow-hidden">
+        <main class="flex-1 overflow-hidden text-gray-800 dark:text-dark-text">
             <slot />
         </main>
     </div>

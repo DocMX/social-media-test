@@ -1,17 +1,8 @@
 <script setup>
 import {computed, ref} from 'vue'
 import {XMarkIcon, BookmarkIcon} from '@heroicons/vue/24/solid'
-import {
-    TransitionRoot,
-    TransitionChild,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-} from '@headlessui/vue'
 import {useForm, usePage} from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import axiosClient from "@/axiosClient.js";
 import BaseModal from "@/Components/app/BaseModal.vue";
 
 const props = defineProps({
