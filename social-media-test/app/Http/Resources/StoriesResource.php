@@ -14,6 +14,7 @@ class StoriesResource extends JsonResource
         return [
             'id' => $this->id,
             'media_type' => $this->media_type,
+            'preview_path' => $this->preview_path,
             'media_path' => $this->media_path,
             'caption' => $this->caption,
             'created_at' => $this->created_at,

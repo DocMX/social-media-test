@@ -20,10 +20,10 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::table('stories', function (Blueprint $table) {
-            //
+            $table->dropColumn('preview_path');
         });
     }
 };

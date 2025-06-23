@@ -8,7 +8,11 @@ use App\Http\Resources\StoriesResource;
 use App\Models\StoryView;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use FFMpeg\FFMpeg;
+use FFMpeg\Coordinate\TimeCode;
 
 
 class StoryController extends Controller
@@ -24,11 +28,11 @@ class StoryController extends Controller
 
         // Filtrar historias solo de los usuarios seguidos (y que no hayan expirado)
         $stories = Story::with([
-                'user', 
-                'viewers' => function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                }
-            ])
+            'user',
+            'viewers' => function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            }
+        ])
             ->whereIn('user_id', $followedUserIds)
             ->where('expires_at', '>', now())
             ->withCount('views')
@@ -49,21 +53,52 @@ class StoryController extends Controller
         $media = $request->file('media');
         $path = $media->store('stories', 'public');
         $type = $media->getMimeType();
-        $mediaType = str_contains($type, 'video') ? 'video' : 'image';
+        $extension = $media->getClientOriginalExtension();
+        $videoExtensions = ['mp4', 'mov', 'avi', 'webm', 'mkv'];
+        $mediaType = in_array(strtolower($extension), $videoExtensions) ? 'video' : 'image';
+
+        
+
+        $previewPath = null;
+
+        if ($mediaType === 'video') {
+            try {
+                $ffmpeg = FFMpeg::create([
+                    'ffmpeg.binaries'  => env('FFMPEG_PATH', 'ffmpeg'),
+                    'ffprobe.binaries' => env('FFPROBE_PATH', 'ffprobe'),
+                ]);
+
+                $video = $ffmpeg->open(storage_path("app/public/{$path}"));
+
+                $previewFileName = 'previews/' . uniqid() . '.jpg';
+                $fullPreviewPath = storage_path("app/public/{$previewFileName}");
+
+                $frame = $video->frame(TimeCode::fromSeconds(1));
+                $frame->save($fullPreviewPath);
+
+                $previewPath = $previewFileName;
+            } catch (\Exception $e) {
+                dd('Error creando miniatura', $e->getMessage());
+            }
+        }
+
+
 
         $story = Story::create([
             'user_id' => $user->id,
             'media_path' => $path,
+            'preview_path' => $previewPath,
             'media_type' => $mediaType,
             'caption' => $request->input('caption'),
             'expires_at' => now()->addHours(24),
         ]);
-
         return response()->json([
             'message' => 'Historia creada correctamente',
             'story' => new StoriesResource($story),
         ]);
     }
+
+
 
     public function markAsViewed(Request $request)
     {

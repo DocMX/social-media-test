@@ -3,12 +3,15 @@ import { ref, computed, onMounted } from "vue";
 import axios from "@/axiosClient";
 import StoriesModal from "./StoriesModal.vue";
 import CreateStory from "./CreateStory.vue";
+import { usePage } from "@inertiajs/vue3";
 
 const storiesByUser = ref({});
 const selectedUserIndex = ref(0);
 const currentIndex = ref(0);
 const showModal = ref(false);
 const showCreateModal = ref(false);
+
+const authUser = usePage().props.auth.user;
 
 const users = computed(() => Object.values(storiesByUser.value));
 
@@ -65,6 +68,8 @@ onMounted(() => {
 </script>
 
 <template>
+    
+
     <CreateStory v-if="showCreateModal" @close="showCreateModal = false" />
 
     <div
@@ -100,9 +105,14 @@ onMounted(() => {
         >
             <!-- Imagen fondo -->
             <img
-                :src="userStories[0]?.preview || userStories[0]?.url"
+                :src="
+                    userStories[0]?.preview_path
+                        ? `/storage/${userStories[0].preview_path}`
+                        : `/storage/${userStories[0].media_path}`
+                "
                 class="w-full h-full object-cover"
             />
+
             <!-- Filtro oscuro -->
             <div class="absolute inset-0 bg-black/30"></div>
 
