@@ -57,7 +57,7 @@ class StoryController extends Controller
         $videoExtensions = ['mp4', 'mov', 'avi', 'webm', 'mkv'];
         $mediaType = in_array(strtolower($extension), $videoExtensions) ? 'video' : 'image';
 
-        
+
 
         $previewPath = null;
 
@@ -113,5 +113,27 @@ class StoryController extends Controller
         ]);
 
         return response()->json(['status' => 'ok']);
+    }
+
+    public function destroy(Story $story)
+    {
+        $userId = Auth::id(); // Forma más limpia de obtener el ID del usuario autenticado
+
+        if ($story->user_id !== $userId) {
+            abort(403, 'No autorizado');
+        }
+
+        // Solo eliminar si los paths no son null
+        if ($story->media_path) {
+            Storage::disk('public')->delete($story->media_path);
+        }
+
+        if ($story->media_type === 'video' && $story->preview_path) {
+            Storage::disk('public')->delete($story->preview_path);
+        }
+
+        $story->delete();
+
+        return response()->json(['message' => 'Historia eliminada']);
     }
 }

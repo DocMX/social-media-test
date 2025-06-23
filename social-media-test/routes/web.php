@@ -123,7 +123,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/stories', [StoryController::class, 'index'])->name('stories');
     Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
     Route::post('/stories/view', [StoryController::class, 'markAsViewed'])->name('stories.view');
-
+    Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('stories.destroy');
 });
 
 require __DIR__ . '/auth.php';

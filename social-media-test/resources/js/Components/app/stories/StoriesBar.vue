@@ -60,7 +60,16 @@ const prevStory = () => {
         closeModal();
     }
 };
+const deleteStory = async (storyId) => {
+    if (!confirm("¿Estás segura de eliminar esta historia?")) return;
 
+    try {
+        await axios.delete(route("stories.destroy", storyId));
+        fetchStories();
+    } catch (error) {
+        console.error("Error eliminando historia:", error);
+    }
+};
 onMounted(() => {
     fetchStories();
     setInterval(fetchStories, 30000);
@@ -68,8 +77,6 @@ onMounted(() => {
 </script>
 
 <template>
-    
-
     <CreateStory v-if="showCreateModal" @close="showCreateModal = false" />
 
     <div
@@ -112,7 +119,18 @@ onMounted(() => {
                 "
                 class="w-full h-full object-cover"
             />
-
+            <!-- Solo mostrar botón si es del usuario autenticado -->
+            <div
+                v-if="userStories.length && userStories[0].user?.id === authUser?.id"
+                class="absolute top-2 right-2 z-10"
+            >
+                <button
+                    @click.stop="deleteStory(userStories[0].id)"
+                    class="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
+                >
+                    Eliminar
+                </button>
+            </div>
             <!-- Filtro oscuro -->
             <div class="absolute inset-0 bg-black/30"></div>
 
