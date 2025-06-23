@@ -18,17 +18,17 @@ export default {
             },
             colors: {
                 dark: {
-                    bg: "#18191a", // fondo general
-                    card: "#242526", // tarjetas, comentarios, etc.
-                    text: "#e4e6eb", // texto principal
-                    muted: "#b0b3b8", // texto secundario o desactivado
-                    border: "#3a3b3c", // bordes sutiles
-                    accent: "#1877f2", // color de acción (azul Facebook)
-                    hover: "#3a3b3c", // para fondos al hacer hover
-                    input: "#3a3b3c", // fondos de inputs
-                    like: "#1d9bf0", // tono para "likes" o botones activos
-                    danger: "#f02849", // errores o eliminar
-                    success: "#31a24c", // mensajes de éxito
+                    bg: "#18191a",
+                    card: "#18191a",
+                    text: "#e4e6eb", 
+                    muted: "#b0b3b8", 
+                    border: "#3a3b3c",
+                    accent: "#1877f2",
+                    hover: "#3a3b3c", 
+                    input: "#3a3b3c",
+                    like: "#1d9bf0", 
+                    danger: "#f02849",
+                    success: "#31a24c", 
                 },
             },
         },

@@ -201,9 +201,9 @@ function leaveGroup() {
 
 <template>
     <AuthenticatedLayout>
-        <div class="max-w-[768px] mx-auto h-full overflow-auto">
+        <div class="max-w-[768px] mx-auto h-full  overflow-auto">
             <div class="px-4">
-                <div
+                <div 
                     v-show="showNotification && success"
                     class="my-2 py-2 px-3 font-medium text-sm bg-emerald-500 text-white"
                 >

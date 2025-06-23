@@ -43,7 +43,6 @@ function resetNewPost() {
 
 watch(showModal, (value) => {
     if (!value) {
-        
         resetNewPost();
     }
 });
@@ -51,14 +50,24 @@ watch(showModal, (value) => {
 
 <template>
     <div
-        class="p-4 bg-white dark:bg-slate-950 rounded-lg border dark:border-slate-900 mb-3 transition-opacity duration-300 opacity-0 animate-fadeIn"
+        class="p-4 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border text-gray-800 dark:text-dark-text rounded-2xl mb-4 shadow-sm transition-all duration-300 opacity-0 animate-fadeIn"
     >
-        <button
-            @click="showCreatePostModal"
-            class="py-2 px-3 border-2 border-gray-200 dark:border-slate-900 text-gray-500 rounded-md mb-3 w-full text-left hover:bg-gray-50 dark:hover:bg-slate-900 transition transform hover:scale-[1.01] active:scale-[0.98]"
-        >
-            Click here to create new post
-        </button>
+        <div class="flex items-center gap-3">
+            <!-- Avatar -->
+            <img
+                :src="authUser.avatar || '/img/default-avatar.jpg'"
+                alt="User Avatar"
+                class="w-10 h-10 rounded-full object-cover border"
+            />
+
+            <!-- Campo de entrada tipo botón -->
+            <button
+                @click="showCreatePostModal"
+                class="w-full bg-gray-100 dark:bg-slate-900 text-gray-600 dark:text-gray-400 px-5 py-2 rounded-full text-left hover:bg-gray-200 dark:hover:bg-slate-800 transition"
+            >
+                What's on your mind, {{ authUser.name }}?
+            </button>
+        </div>
 
         <PostModal :post="newPost" :group="group" v-model="showModal" />
     </div>

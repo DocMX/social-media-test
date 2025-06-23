@@ -13,11 +13,9 @@ defineProps({
 
 <template>
     <div
-        class="px-3 bg-white dark:bg-slate-950 rounded border dark:border-slate-900 dark:text-gray-100 h-full py-3 overflow-hidden"
+        class="px-4 py-4 bg-white dark:bg-dark-card rounded-2xl dark:text-dark-text shadow-sm transition-colors duration-300"
     >
-        <!-- Vista en móvil -->
         <div class="block lg:hidden space-y-4">
-            <!-- Mis grupos -->
             <Disclosure v-slot="{ open }">
                 <DisclosureButton class="w-full">
                     <div class="flex justify-between items-center">
@@ -44,7 +42,6 @@ defineProps({
                 </DisclosurePanel>
             </Disclosure>
 
-            <!-- Grupos recomendados -->
             <Disclosure v-if="recommendedGroups.length" v-slot="{ open }">
                 <DisclosureButton class="w-full">
                     <div class="flex justify-between items-center">
@@ -67,12 +64,15 @@ defineProps({
                     </div>
                 </DisclosureButton>
                 <DisclosurePanel>
-                    <GroupListItems :groups="recommendedGroups" :showControls="false" />
+                    <GroupListItems
+                        :groups="recommendedGroups"
+                        :showControls="false"
+                    />
                 </DisclosurePanel>
             </Disclosure>
         </div>
 
-        <!-- Vista en escritorio -->
+
         <div class="h-full overflow-hidden flex-col hidden lg:flex space-y-5">
             <div>
                 <div class="flex justify-between">
@@ -83,7 +83,10 @@ defineProps({
 
             <div v-if="recommendedGroups.length">
                 <h2 class="text-xl font-bold mb-2">Grupos Recomendados</h2>
-                <GroupListItems :groups="recommendedGroups" :showControls="false" />
+                <GroupListItems
+                    :groups="recommendedGroups"
+                    :showControls="false"
+                />
             </div>
         </div>
     </div>
