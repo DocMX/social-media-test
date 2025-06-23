@@ -60,82 +60,67 @@ const prevStory = () => {
 
 onMounted(() => {
     fetchStories();
-
-    // Refrescar cada 30 segundos
     setInterval(fetchStories, 30000);
 });
 </script>
 
 <template>
-    <!-- Modal Crear Historia -->
     <CreateStory v-if="showCreateModal" @close="showCreateModal = false" />
 
-    <!-- Barra de historias -->
     <div
-        class="flex gap-4 overflow-x-auto px-4 py-3 bg-gray-50 dark:bg-dark-bg rounded-xl shadow-md backdrop-blur-sm"
+        class="flex gap-3 overflow-x-auto px-4 py-3 bg-gray-50 dark:bg-dark-bg rounded-xl shadow-sm"
     >
-        <!-- Botón Crear Historia -->
+        <!-- Crear historia estilo Facebook -->
         <div
-            class="flex flex-col items-center min-w-[80px] max-w-[80px] cursor-pointer"
+            class="w-28 h-48 rounded-lg bg-white dark:bg-slate-800 border shadow hover:scale-105 transition cursor-pointer relative overflow-hidden"
             @click="showCreateModal = true"
         >
+            <img
+                :src="authUser?.avatar || '/img/default-avatar.jpg'"
+                class="w-full h-32 object-cover"
+            />
             <div
-                class="w-16 h-16 rounded-full border-2 border-blue-600 flex items-center justify-center bg-blue-100 dark:bg-dark-card hover:bg-blue-200 dark:hover:bg-dark-muted"
+                class="absolute bottom-0 left-0 right-0 px-2 py-1 text-sm text-center text-gray-700 dark:text-white font-semibold bg-white dark:bg-slate-800"
             >
-                <svg
-                    class="w-6 h-6 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4v16m8-8H4"
-                    />
-                </svg>
+                Crear historia
             </div>
-            <p
-                class="text-xs mt-1 text-center text-blue-600 dark:text-blue-400"
+            <div
+                class="absolute top-2 left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center border-4 border-white dark:border-slate-800"
             >
-                Crear
-            </p>
+                +
+            </div>
         </div>
 
-        <!-- Historias de usuarios -->
+        <!-- Historias de otros usuarios -->
         <div
             v-for="(userStories, idx) in users"
             :key="userStories[0]?.user?.id || idx"
-            class="flex flex-col items-center min-w-[80px] max-w-[80px] cursor-pointer"
             @click="openStory(idx)"
+            class="w-28 h-48 rounded-lg relative cursor-pointer overflow-hidden shadow hover:scale-105 transition"
         >
-            <div
-                :class="[
-                    'p-[2px] rounded-full transition-all duration-500',
-                    isFullyViewed(userStories)
-                        ? 'bg-gray-300 dark:bg-dark-muted'
-                        : 'story-ring',
-                ]"
-            >
-                <img
-                    :src="
-                        userStories[0]?.user?.avatar ||
-                        '/img/default-avatar.jpg'
-                    "
-                    class="w-16 h-16 rounded-full object-cover shadow-md hover:scale-105 transition-transform duration-300"
-                />
-            </div>
+            <!-- Imagen fondo -->
+            <img
+                :src="userStories[0]?.preview || userStories[0]?.url"
+                class="w-full h-full object-cover"
+            />
+            <!-- Filtro oscuro -->
+            <div class="absolute inset-0 bg-black/30"></div>
 
-            <p
-                class="text-xs text-center mt-1 truncate w-full text-gray-800 dark:text-white"
+            <!-- Avatar -->
+            <img
+                :src="userStories[0]?.user?.avatar || '/img/default-avatar.jpg'"
+                class="absolute top-2 left-2 w-8 h-8 rounded-full border-2 border-white"
+            />
+
+            <!-- Nombre -->
+            <div
+                class="absolute bottom-2 left-2 right-2 text-white text-xs font-semibold truncate"
             >
                 {{ userStories[0]?.user?.name || "Usuario" }}
-            </p>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Ver historias -->
     <StoriesModal
         v-if="showModal"
         :users="users"
