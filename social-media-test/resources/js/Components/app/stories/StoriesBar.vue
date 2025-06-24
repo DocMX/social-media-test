@@ -12,7 +12,7 @@ const showModal = ref(false);
 const showCreateModal = ref(false);
 
 const authUser = usePage().props.auth.user;
-
+console.log(authUser);
 const users = computed(() => Object.values(storiesByUser.value));
 
 const fetchStories = async () => {
@@ -88,7 +88,7 @@ onMounted(() => {
             @click="showCreateModal = true"
         >
             <img
-                :src="authUser?.avatar || '/img/default-avatar.jpg'"
+                :src="authUser?.avatar_path ? '/storage/' + authUser.avatar_path : '/img/default-avatar.jpg'"
                 class="w-full h-32 object-cover"
             />
             <div
