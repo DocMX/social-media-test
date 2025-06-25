@@ -10,10 +10,15 @@ const selectedUserIndex = ref(0);
 const currentIndex = ref(0);
 const showModal = ref(false);
 const showCreateModal = ref(false);
+const activeMenuIndex = ref(null);
 
 const authUser = usePage().props.auth.user;
 console.log(authUser);
 const users = computed(() => Object.values(storiesByUser.value));
+
+const toggleMenu = (idx) => {
+    activeMenuIndex.value = activeMenuIndex.value === idx ? null : idx;
+};
 
 const fetchStories = async () => {
     try {
@@ -88,7 +93,11 @@ onMounted(() => {
             @click="showCreateModal = true"
         >
             <img
-                :src="authUser?.avatar_path ? '/storage/' + authUser.avatar_path : '/img/default-avatar.jpg'"
+                :src="
+                    authUser?.avatar_path
+                        ? '/storage/' + authUser.avatar_path
+                        : '/img/default-avatar.jpg'
+                "
                 class="w-full h-32 object-cover"
             />
             <div
@@ -119,18 +128,36 @@ onMounted(() => {
                 "
                 class="w-full h-full object-cover"
             />
-            <!-- Solo mostrar botón si es del usuario autenticado -->
+            <!-- Menú desplegable solo para el usuario autenticado -->
             <div
-                v-if="userStories.length && userStories[0].user?.id === authUser?.id"
-                class="absolute top-2 right-2 z-10"
+                v-if="
+                    userStories.length &&
+                    userStories[0].user?.id === authUser?.id
+                "
+                class="absolute top-2 right-2 z-20"
             >
+                <!-- Botón de 3 puntos -->
                 <button
-                    @click.stop="deleteStory(userStories[0].id)"
-                    class="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
+                    @click.stop="toggleMenu(idx)"
+                    class="text-white bg-black/40 hover:bg-black/60 rounded-full px-2 py-1"
                 >
-                    Eliminar
+                    ⋮
                 </button>
+
+                <!-- Menú -->
+                <div
+                    v-if="activeMenuIndex === idx"
+                    class="absolute right-0 mt-2 w-24 bg-white border rounded shadow text-sm z-30"
+                >
+                    <button
+                        @click.stop="deleteStory(userStories[0].id)"
+                        class="w-full text-left px-3 py-2 text-red-600 hover:bg-red-100"
+                    >
+                        Eliminar
+                    </button>
+                </div>
             </div>
+
             <!-- Filtro oscuro -->
             <div class="absolute inset-0 bg-black/30"></div>
 
@@ -140,7 +167,7 @@ onMounted(() => {
                 class="absolute top-2 left-2 w-8 h-8 rounded-full border-2 border-white"
             />
 
-            <!-- Nombre -->
+            <!-- Name -->
             <div
                 class="absolute bottom-2 left-2 right-2 text-white text-xs font-semibold truncate"
             >
