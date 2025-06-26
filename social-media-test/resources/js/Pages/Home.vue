@@ -35,8 +35,9 @@ defineProps({
 
       <!-- Feed principal -->
       <div class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col">
-        <StoriesBar />
+        
         <CreatePost />
+        <StoriesBar />
         <PostList :posts="posts.data" class="flex-1" />
       </div>
     </div>

@@ -55,7 +55,11 @@ watch(showModal, (value) => {
         <div class="flex items-center gap-3">
             <!-- Avatar -->
             <img
-                :src="authUser.avatar || '/img/default-avatar.jpg'"
+                :src="
+                    authUser?.avatar_path
+                        ? '/storage/' + authUser.avatar_path
+                        : '/img/default-avatar.jpg'
+                "
                 alt="User Avatar"
                 class="w-10 h-10 rounded-full object-cover border"
             />
@@ -63,7 +67,7 @@ watch(showModal, (value) => {
             <!-- Campo de entrada tipo botón -->
             <button
                 @click="showCreatePostModal"
-                class="w-full bg-gray-100 dark:bg-slate-900 text-gray-600 dark:text-gray-400 px-5 py-2 rounded-full text-left hover:bg-gray-200 dark:hover:bg-slate-800 transition"
+                class="w-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-5 py-2 rounded-full text-left hover:bg-gray-200 dark:hover:bg-gray-500 transition"
             >
                 What's on your mind, {{ authUser.name }}?
             </button>

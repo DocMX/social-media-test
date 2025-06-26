@@ -126,11 +126,12 @@ onMounted(() => {
     <CreateStory v-if="showCreateModal" @close="showCreateModal = false" />
     <!-- Contenedor principal de todas las historias -->
     <div
-        class="flex gap-3 overflow-x-auto px-4 py-3 bg-gray-50 dark:bg-dark-bg rounded-xl shadow-sm"
+        class="flex gap-3 overflow-x-auto px-4 mb-4 py-3 bg-gray-50 dark:bg-dark-bg rounded-xl shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200"
+        style="scrollbar-width: thin; max-width: 100%; white-space: nowrap"
     >
         <!-- Crear historia estilo Facebook -->
         <div
-            class="w-28 h-48 rounded-lg bg-white dark:bg-slate-800 border shadow hover:scale-105 transition cursor-pointer relative overflow-hidden"
+            class="w-28 h-48 flex-shrink-0 rounded-lg bg-white dark:bg-slate-800 border shadow hover:scale-105 transition cursor-pointer relative overflow-hidden"
             @click="showCreateModal = true"
         >
             <img
@@ -158,7 +159,7 @@ onMounted(() => {
             v-for="(userStories, idx) in users"
             :key="userStories[0]?.user?.id || idx"
             @click="openStory(idx)"
-            class="w-28 h-48 rounded-lg relative cursor-pointer overflow-hidden shadow hover:scale-105 transition"
+            class="w-28 h-48 flex-shrink-0 rounded-lg relative cursor-pointer overflow-hidden shadow hover:scale-105 transition"
         >
             <!-- Imagen fondo -->
             <img
@@ -205,7 +206,6 @@ onMounted(() => {
                                 d="M3 3a1 1 0 012 0v10a1 1 0 102 0V5a1 1 0 112 0v8a1 1 0 102 0V7a1 1 0 112 0v6a1 1 0 102 0V3a1 1 0 112 0v12a1 1 0 01-1 1H3a1 1 0 01-1-1V3z"
                             />
                         </svg>
-                 
                     </button>
                     <button
                         @click.stop="deleteStory(userStories[0].id)"
@@ -223,7 +223,6 @@ onMounted(() => {
                                 clip-rule="evenodd"
                             />
                         </svg>
-             
                     </button>
                 </div>
             </div>
@@ -267,5 +266,22 @@ onMounted(() => {
 
 .story-ring.viewed {
     background: #d1d5db; /* gray-300 */
+}
+/* src/assets/css/custom-scroll.css */
+::-webkit-scrollbar {
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 </style>
