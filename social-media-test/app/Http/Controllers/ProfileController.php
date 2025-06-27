@@ -21,7 +21,7 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    
+
     public function index(Request $request, User $user)
     {
         $isCurrentUserFollower = false;
@@ -111,40 +111,42 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-     public function updateImage(Request $request)
-     {
-         $data = $request->validate([
+    public function updateImage(Request $request)
+    {
+        $user = $request->user(); // Usuario autenticado
+
+        // Validar los archivos
+        $data = $request->validate([
             'cover' => ['nullable', 'image'],
-            'avatar' => ['nullable', 'image']
+            'avatar' => ['nullable', 'image'],
         ]);
 
-        $user = $request->user();
+        $success = null;
 
-        $avatar = $data['avatar'] ?? null;
-        /** @var \Illuminate\Http\UploadedFile $cover */
-        $cover = $data['cover'] ?? null;
-
-        $success = '';
-        if ($cover) {
+        // Actualizar portada si se envía
+        if ($data['cover'] ?? false) {
             if ($user->cover_path) {
                 Storage::disk('public')->delete($user->cover_path);
             }
-            $path = $cover->store('user-' . $user->id, 'public');
-            $user->update(['cover_path' => $path]);
+
+            $coverPath = $data['cover']->store('user-' . $user->id, 'public');
+            $user->cover_path = $coverPath;
             $success = 'Your cover image was updated';
         }
 
-        if ($avatar) {
+        // Actualizar avatar si se envía
+        if ($data['avatar'] ?? false) {
             if ($user->avatar_path) {
                 Storage::disk('public')->delete($user->avatar_path);
             }
-            $path = $avatar->store('user-' . $user->id, 'public');
-            $user->update(['avatar_path' => $path]);
+
+            $avatarPath = $data['avatar']->store('user-' . $user->id, 'public');
+            $user->avatar_path = $avatarPath;
             $success = 'Your avatar image was updated';
         }
 
-//        session('success', 'Cover image has been updated');
+        $user->save();
 
-        return back()->with('success', $success);
-     }
+        return back()->with('success', $success ?? 'No image was updated.');
+    }
 }

@@ -32,7 +32,7 @@ const activeMenuIndex = ref(null);
 
 /* Información del usuario autenticado desde Inertia */
 const authUser = usePage().props.auth.user;
-console.log(authUser); // Ayuda a verificar los datos disponibles
+
 
 /* Lista computada de usuarios con historias (convierte objeto en array) */
 const users = computed(() => Object.values(storiesByUser.value));
