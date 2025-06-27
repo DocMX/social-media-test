@@ -67,7 +67,7 @@ function toggleDarkMode() {
                         <TextInput
                             v-model="keywords"
                             placeholder="Search on the website"
-                            class="w-full dark:bg-dark-input dark:border-dark-border dark:text-dark-text"
+                            class="w-full dark:bg-gray-950 dark:border-dark-border dark:text-dark-text"
                             @keyup.enter="search"
                         />
 

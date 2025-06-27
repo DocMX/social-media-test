@@ -2,6 +2,7 @@
 import {
     ChatBubbleLeftRightIcon,
     HandThumbUpIcon,
+    MapPinIcon
 } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
@@ -9,11 +10,10 @@ import { router, useForm, usePage } from "@inertiajs/vue3";
 import axiosClient from "@/axiosClient.js";
 import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
 import EditDeleteDropdown from "@/Components/app/EditDeleteDropdown.vue";
-import PostAttachments from "@/Components/app/PostAttachments.vue";
 import CommentList from "@/Components/app/CommentList.vue";
 import { computed } from "vue";
 import UrlPreview from "@/Components/app/UrlPreview.vue";
-import { MapPinIcon } from "@heroicons/vue/24/outline/index.js";
+import PostCarousel from "./postCarousel.vue";
 
 const props = defineProps({
     post: Object,
@@ -29,19 +29,14 @@ const postBody = computed(() => {
         /(?:(\s+)|<p>)((#\w+)(?![^<]*<\/a>))/g,
         (match, group1, group2) => {
             const encodedGroup = encodeURIComponent(group2);
-            return `${
-                group1 || ""
-            }<a href="/search/${encodedGroup}" class="hashtag">${group2}</a>`;
+            return `${group1 || ""}<a href="/search/${encodedGroup}" class="hashtag">${group2}</a>`;
         }
     );
-
     return content;
 });
-const isPinned = computed(() => {
-    if (group?.id) {
-        return group?.pinned_post_id === props.post.id;
-    }
 
+const isPinned = computed(() => {
+    if (group?.id) return group?.pinned_post_id === props.post.id;
     return authUser?.pinned_post_id === props.post.id;
 });
 
@@ -51,59 +46,39 @@ function openEditModal() {
 
 function deletePost() {
     if (window.confirm("Are you sure you want to delete this post?")) {
-        router.delete(route("post.destroy", props.post), {
-            preserveScroll: true,
-        });
+        router.delete(route("post.destroy", props.post), { preserveScroll: true });
     }
 }
 
 function pinUnpinPost() {
-    const form = useForm({
-        forGroup: group?.id,
-    });
-    let isPinned = false;
-    if (group?.id) {
-        isPinned = group?.pinned_post_id === props.post.id;
-    } else {
-        isPinned = authUser?.pinned_post_id === props.post.id;
-    }
+    const form = useForm({ forGroup: group?.id });
+    const currentlyPinned = isPinned.value;
 
     form.post(route("post.pinUnpin", props.post.id), {
         preserveScroll: true,
         onSuccess: () => {
             if (group?.id) {
-                group.pinned_post_id = isPinned ? null : props.post.id;
+                group.pinned_post_id = currentlyPinned ? null : props.post.id;
             } else {
-                authUser.pinned_post_id = isPinned ? null : props.post.id;
+                authUser.pinned_post_id = currentlyPinned ? null : props.post.id;
             }
         },
     });
 }
 
-function openAttachment(ind) {
-    emit("attachmentClick", props.post, ind);
-}
-
 function sendReaction() {
-    axiosClient
-        .post(route("post.reaction", props.post), {
-            reaction: "like",
-        })
+    axiosClient.post(route("post.reaction", props.post), { reaction: "like" })
         .then(({ data }) => {
-            props.post.current_user_has_reaction =
-                data.current_user_has_reaction;
+            props.post.current_user_has_reaction = data.current_user_has_reaction;
             props.post.num_of_reactions = data.num_of_reactions;
             playLikeSound();
         });
 }
+
 function playLikeSound() {
     const audio = new Audio("/sounds/like.wav");
-    audio.play().catch((e) => {
-        console.warn("No se pudo reproducir el sonido:", e);
-    });
-    if (navigator.vibrate) {
-        navigator.vibrate(50);
-    }
+    audio.play().catch((e) => console.warn("No se pudo reproducir el sonido:", e));
+    if (navigator.vibrate) navigator.vibrate(50);
 }
 </script>
 
@@ -111,6 +86,7 @@ function playLikeSound() {
     <div
         class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border text-gray-800 dark:text-dark-text rounded-2xl p-5 mb-4 shadow-sm transition-colors duration-300"
     >
+        <!-- Cabecera con usuario y opciones -->
         <div class="flex items-center justify-between mb-3">
             <PostUserHeader :post="post" />
             <div class="flex items-center gap-2">
@@ -127,23 +103,20 @@ function playLikeSound() {
                 />
             </div>
         </div>
+
+        <!-- Contenido del post -->
         <div class="mb-3">
             <ReadMoreReadLess :content="postBody" />
             <UrlPreview :preview="post.preview" :url="post.preview_url" />
         </div>
-        <div
-            class="grid gap-3 mb-3"
-            :class="[
-                post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2',
-            ]"
-        >
-            <PostAttachments
-                :attachments="post.attachments"
-                @attachmentClick="openAttachment"
-            />
+
+        <!-- Carrusel tipo Instagram -->
+        <div v-if="post.attachments.length" class="mb-4">
+            <PostCarousel :media="post.attachments" />
         </div>
+
+        <!-- Botones de Like y Comentario -->
         <Disclosure v-slot="{ open }">
-            <!--            Like & Comment buttons-->
             <div class="flex gap-2">
                 <button
                     @click="sendReaction"
@@ -151,7 +124,7 @@ function playLikeSound() {
                     :class="[
                         post.current_user_has_reaction
                             ? 'bg-sky-100 dark:bg-sky-900 hover:bg-sky-200 dark:hover:bg-sky-950'
-                            : 'bg-gray-100 dark:bg-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800 ',
+                            : 'bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700',
                     ]"
                 >
                     <HandThumbUpIcon class="w-5 h-5" />
@@ -167,9 +140,8 @@ function playLikeSound() {
                 </DisclosureButton>
             </div>
 
-            <DisclosurePanel
-                class="comment-list mt-3 max-h-[400px] overflow-auto"
-            >
+            <!-- Lista de comentarios -->
+            <DisclosurePanel class="comment-list mt-3 max-h-[400px] overflow-auto">
                 <CommentList :post="post" :data="{ comments: post.comments }" />
             </DisclosurePanel>
         </Disclosure>
