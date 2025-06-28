@@ -2,11 +2,11 @@
 import {
     ChatBubbleLeftRightIcon,
     HandThumbUpIcon,
-    MapPinIcon
+    MapPinIcon,
 } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
-import { router, useForm, usePage } from "@inertiajs/vue3";
+import { useForm, usePage } from "@inertiajs/vue3";
 import axiosClient from "@/axiosClient.js";
 import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
 import EditDeleteDropdown from "@/Components/app/EditDeleteDropdown.vue";
@@ -22,7 +22,7 @@ const props = defineProps({
 const authUser = usePage().props.auth.user;
 const group = usePage().props.group;
 
-const emit = defineEmits(["editClick", "attachmentClick"]);
+const emit = defineEmits(["editClick", "attachmentClick", "updatePost"]);
 
 const postBody = computed(() => {
     let content = props.post.body.replace(
@@ -46,7 +46,9 @@ function openEditModal() {
 
 function deletePost() {
     if (window.confirm("Are you sure you want to delete this post?")) {
-        router.delete(route("post.destroy", props.post), { preserveScroll: true });
+        axiosClient.delete(route("post.destroy", props.post)).then(() => {
+            // Opcional: Emitir evento si necesitas remover el post de la lista
+        });
     }
 }
 
@@ -69,8 +71,13 @@ function pinUnpinPost() {
 function sendReaction() {
     axiosClient.post(route("post.reaction", props.post), { reaction: "like" })
         .then(({ data }) => {
-            props.post.current_user_has_reaction = data.current_user_has_reaction;
-            props.post.num_of_reactions = data.num_of_reactions;
+            const updatedPost = {
+                ...props.post,
+                current_user_has_reaction: data.current_user_has_reaction,
+                num_of_reactions: data.num_of_reactions,
+            };
+
+            emit("updatePost", updatedPost);
             playLikeSound();
         });
 }
@@ -115,28 +122,36 @@ function playLikeSound() {
             <PostCarousel :media="post.attachments" />
         </div>
 
-        <!-- Botones de Like y Comentario -->
+        <!-- Reacciones y Comentarios Summary -->
+        <div
+            class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-2 px-1"
+        >
+            <div class="flex items-center gap-1">
+                <HandThumbUpIcon class="h-4 w-4 text-sky-600" />
+                <span>
+                    {{ post.num_of_reactions }} like<span v-if="post.num_of_reactions !== 1">s</span>
+                </span>
+            </div>
+            <div class="text-xs">
+                {{ post.num_of_comments }} comment<span v-if="post.num_of_comments !== 1">s</span>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
         <Disclosure v-slot="{ open }">
-            <div class="flex gap-2">
+            <div class="flex justify-around border-t border-b py-2 dark:border-gray-700 text-sm font-semibold">
                 <button
                     @click="sendReaction"
-                    class="text-gray-800 dark:text-gray-100 flex gap-1 items-center justify-center rounded-lg py-2 px-4 flex-1"
-                    :class="[
-                        post.current_user_has_reaction
-                            ? 'bg-sky-100 dark:bg-sky-900 hover:bg-sky-200 dark:hover:bg-sky-950'
-                            : 'bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700',
-                    ]"
+                    class="flex items-center gap-2 px-4 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                 >
-                    <HandThumbUpIcon class="w-5 h-5" />
-                    <span class="mr-2">{{ post.num_of_reactions }}</span>
-                    {{ post.current_user_has_reaction ? "Unlike" : "Like" }}
+                    <HandThumbUpIcon class="w-5 h-5 text-sky-600" />
+                    <span>{{ post.current_user_has_reaction ? "Unlike" : "Like" }}</span>
                 </button>
                 <DisclosureButton
-                    class="text-gray-800 dark:text-gray-100 flex gap-1 items-center justify-center bg-gray-100 dark:bg-slate-900 dark:hover:bg-slate-800 rounded-lg hover:bg-gray-200 py-2 px-4 flex-1"
+                    class="flex items-center gap-2 px-4 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
                 >
-                    <ChatBubbleLeftRightIcon class="w-5 h-5" />
-                    <span class="mr-2">{{ post.num_of_comments }}</span>
-                    Comment
+                    <ChatBubbleLeftRightIcon class="w-5 h-5 text-gray-500 dark:text-gray-300" />
+                    <span>Comment</span>
                 </DisclosureButton>
             </div>
 

@@ -24,6 +24,7 @@ class HomeController extends Controller
         // Obtener publicaciones del timeline
         $posts = Post::postsForTimeline($userId)
             ->select('posts.*')
+            ->withCount(['reactions', 'comments'])
             ->leftJoin('followers AS f', function ($join) use ($userId) {
                 $join->on('posts.user_id', '=', 'f.user_id')
                     ->where('f.follower_id', '=', $userId);
