@@ -56,29 +56,32 @@ class Post extends Model
     public static function postsForTimeline($userId, $getLatest = true): Builder
     {
         $query = Post::query() // SELECT * FROM posts
-        ->withCount('reactions') // SELECT COUNT(*) from reactions
-        ->with([
-            'user',
-            'group',
-            'group.currentUserGroup',
-            'attachments',
-            'comments' => function ($query) {
-                $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
-                // SELECT COUNT(*) from reactions
-            },
-            'comments.user',
-            'comments.reactions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
-            },
-            'reactions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
-            }]);
+            ->withCount('reactions') // SELECT COUNT(*) from reactions
+            ->with([
+                'user',
+                'group',
+                'group.currentUserGroup',
+                'attachments',
+                'comments' => function ($query) {
+                    $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
+                    // SELECT COUNT(*) from reactions
+                },
+                'comments.user',
+                'comments.reactions' => function ($query) use ($userId) {
+                    $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
+                },
+                'reactions' => function ($query) {
+                    $query->with('user');
+                    // SELECT * from reactions WHERE user_id = ?
+                }
+            ]);
         if ($getLatest) {
             $query->latest();
         }
 
         return $query;
     }
+
 
     public function isOwner($userId)
     {

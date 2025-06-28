@@ -30,11 +30,14 @@ class PostResource extends JsonResource
             'num_of_comments' => count($comments),
             'current_user_has_reaction' => $this->reactions->count() > 0,
             'comments' => self::convertCommentsIntoTree($comments),
+            'reactions_users' => UserResource::collection(
+                $this->whenLoaded('reactions')->pluck('user')->filter()
+            ),
             //'is_recommended' => $this->when(isset($this->is_recommended), $this->is_recommended) : null,
         ];
     }
 
- 
+
     private static function convertCommentsIntoTree($comments, $parentId = null): array
     {
         $commentTree = [];
