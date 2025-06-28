@@ -12,33 +12,28 @@ import NotificationBell from "@/Components/app/notifications/NotificationBell.vu
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || "");
 
-
-
 const authUser = usePage().props.auth.user;
 onMounted(() => {
-  const html = document.documentElement
-  const prefersDark = localStorage.getItem('darkMode') === '1'
-  if (prefersDark) {
-    html.classList.add('dark')
-  } else {
-    html.classList.remove('dark')
-  }
-})
+    const html = document.documentElement;
+    const prefersDark = localStorage.getItem("darkMode") === "1";
+    if (prefersDark) {
+        html.classList.add("dark");
+    } else {
+        html.classList.remove("dark");
+    }
+});
 
 function search() {
     router.get(route("search", encodeURIComponent(keywords.value)));
 }
 
 function toggleDarkMode() {
-  const html = document.documentElement
-  const isDark = html.classList.contains('dark')
+    const html = document.documentElement;
+    const isDark = html.classList.contains("dark");
 
-  html.classList.toggle('dark', !isDark)
-  localStorage.setItem('darkMode', isDark ? '0' : '1')
+    html.classList.toggle("dark", !isDark);
+    localStorage.setItem("darkMode", isDark ? "0" : "1");
 }
-
-
-
 </script>
 
 <template>
@@ -48,7 +43,6 @@ function toggleDarkMode() {
         <nav
             class="bg-white dark:bg-dark-card border-b border-gray-100 dark:border-dark-border"
         >
-            
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between gap-2 h-16">
@@ -71,12 +65,14 @@ function toggleDarkMode() {
                             @keyup.enter="search"
                         />
 
-                        <button @click="toggleDarkMode" class="text-gray-700 dark:text-dark-text">
+                        <button
+                            @click="toggleDarkMode"
+                            class="text-gray-700 dark:text-dark-text"
+                        >
                             <MoonIcon class="w-5 h-5" />
                         </button>
-                         <!-- Componente de Notificaciones -->
+                        <!-- Componente de Notificaciones -->
                         <NotificationBell />
-                    
                     </div>
 
                     <div class="hidden sm:flex sm:items-center">
@@ -87,22 +83,18 @@ function toggleDarkMode() {
                                     <span class="inline-flex rounded-md">
                                         <button
                                             type="button"
-                                            class="inline-flex items-center px-3 py-2 text-sm rounded-md text-gray-500 dark:text-dark-text bg-white dark:bg-dark-card hover:text-gray-700 dark:hover:text-gray-200"
+                                            class="inline-flex items-center rounded-full border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         >
-                                            {{ authUser.name }}
-
-                                            <svg
-                                                class="ms-2 -me-0.5 h-4 w-4"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                viewBox="0 0 20 20"
-                                                fill="currentColor"
-                                            >
-                                                <path
-                                                    fill-rule="evenodd"
-                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                    clip-rule="evenodd"
-                                                />
-                                            </svg>
+                                            <img
+                                                :src="
+                                                    authUser?.avatar_path
+                                                        ? '/storage/' +
+                                                          authUser.avatar_path
+                                                        : '/img/default-avatar.jpg'
+                                                "
+                                                alt="Avatar"
+                                                class="w-10 h-10 rounded-full object-cover"
+                                            />
                                         </button>
                                     </span>
                                 </template>

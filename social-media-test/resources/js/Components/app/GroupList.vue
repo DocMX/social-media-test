@@ -45,7 +45,7 @@ defineProps({
             <Disclosure v-if="recommendedGroups.length" v-slot="{ open }">
                 <DisclosureButton class="w-full">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-bold">Grupos Recomendados</h2>
+                        <h2 class="text-xl font-bold">Recommended groups</h2>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -82,7 +82,7 @@ defineProps({
             </div>
 
             <div v-if="recommendedGroups.length">
-                <h2 class="text-xl font-bold mb-2">Grupos Recomendados</h2>
+                <h2 class="text-xl font-bold mb-2">Recommended groups</h2>
                 <GroupListItems
                     :groups="recommendedGroups"
                     :showControls="false"
