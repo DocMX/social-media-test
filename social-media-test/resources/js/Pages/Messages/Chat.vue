@@ -41,7 +41,7 @@ onMounted(scrollToBottom);
   <AuthenticatedLayout>
     <Head :title="`Chat con ${props.user.name}`" />
     <template #header>
-      <h2>💬 Chat con {{ props.user.name }}</h2>
+      <h2>💬 Chat with {{ props.user.name }}</h2>
     </template>
 
     <div class="flex flex-col h-[70vh] max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded shadow">
@@ -62,7 +62,7 @@ onMounted(scrollToBottom);
 
       <form @submit.prevent="sendMessage" class="flex border-t p-4 border-gray-200 dark:border-gray-700">
         <input v-model="form.body" placeholder="Escribe un mensaje..." class="flex-1 ..." />
-        <button type="submit" class="ml-2 bg-indigo-600 text-white rounded px-4 py-2">Enviar</button>
+        <button type="submit" class="ml-2 bg-indigo-600 text-white rounded px-4 py-2">Send</button>
       </form>
     </div>
   </AuthenticatedLayout>

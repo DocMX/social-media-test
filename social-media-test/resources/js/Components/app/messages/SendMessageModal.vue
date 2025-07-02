@@ -57,7 +57,7 @@ const send = () => {
             <h2
                 class="text-lg font-semibold text-gray-800 dark:text-white mb-4"
             >
-                Enviar mensaje
+                Send Message
             </h2>
 
             <form @submit.prevent="send" class="space-y-4">
@@ -93,7 +93,7 @@ const send = () => {
                     <label
                         class="block text-sm text-gray-600 dark:text-gray-300"
                     >
-                        Mensaje
+                        Meessage
                     </label>
                     <textarea
                         v-model="form.body"
@@ -120,7 +120,7 @@ const send = () => {
                         type="submit"
                         class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                     >
-                        Enviar
+                        Send
                     </button>
                 </div>
             </form>
