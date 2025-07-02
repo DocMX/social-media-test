@@ -128,6 +128,8 @@ Route::middleware('auth')->group(function () {
 
     //messages
     Route::get('/messages', [MessageController::class, 'index'])->name('messages');
+    Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+    Route::get('/messages/{user}', [MessageController::class, 'chat'])->name('messages.chat');
 
 
 });
