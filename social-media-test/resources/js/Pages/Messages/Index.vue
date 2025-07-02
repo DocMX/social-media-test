@@ -3,6 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import SendMessageModal from "@/Components/app/messages/SendMessageModal.vue";
 import { Head, router } from "@inertiajs/vue3";
 import { ref, watch, nextTick, onMounted } from "vue";
+import { ChatBubbleLeftEllipsisIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
   conversations: Array,
@@ -35,7 +36,7 @@ function handleResize() {
 window.addEventListener("resize", handleResize);
 onMounted(handleResize);
 
-// Scroll al final de mensajes
+
 function scrollToBottom() {
   nextTick(() => {
     if (messagesContainer.value) {
@@ -109,8 +110,9 @@ scrollToBottom();
 
     <template #header>
       <div class="flex justify-between items-center">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">
-          💬 Mensajes
+        <h2 class="flex font-semibold text-xl text-gray-800 dark:text-white leading-tight">
+          <ChatBubbleLeftEllipsisIcon class="w-6 h-6" /> 
+          MESSAGES
         </h2>
         <button
           @click="showModal = true"
@@ -122,7 +124,6 @@ scrollToBottom();
     </template>
 
     <div class="max-w-7xl mx-auto mt-6 flex gap-4 h-[70vh]">
-      <!-- Sidebar de conversaciones -->
       <div
         v-show="!isMobileView || (isMobileView && !showChat)"
         class="hidden md:flex md:flex-col md:w-1/3 bg-white dark:bg-gray-800 rounded shadow overflow-auto"

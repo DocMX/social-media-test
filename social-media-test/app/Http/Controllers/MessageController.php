@@ -64,14 +64,12 @@ class MessageController extends Controller
     {
         $validated = $request->validate([
             'receiver_id' => 'required|exists:users,id',
-            'subject' => 'required|string|max:255',
             'body' => 'required|string',
         ]);
 
         Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $validated['receiver_id'],
-            'subject' => $validated['subject'],
             'body' => $validated['body'],
         ]);
 

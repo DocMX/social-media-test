@@ -21,7 +21,7 @@ const emit = defineEmits(["close"]);
 
 const form = useForm({
     receiver_id: props.receiverId ?? null,
-    subject: "",
+    
     body: "",
 });
 
@@ -88,24 +88,6 @@ const send = () => {
                     </div>
                 </div>
 
-                <div>
-                    <label
-                        class="block text-sm text-gray-600 dark:text-gray-300"
-                    >
-                        Asunto
-                    </label>
-                    <input
-                        v-model="form.subject"
-                        type="text"
-                        class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-white"
-                    />
-                    <div
-                        v-if="form.errors.subject"
-                        class="text-sm text-red-500 mt-1"
-                    >
-                        {{ form.errors.subject }}
-                    </div>
-                </div>
 
                 <div>
                     <label
