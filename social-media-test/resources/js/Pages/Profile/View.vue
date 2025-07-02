@@ -129,208 +129,313 @@ function followUser() {
 
 <template>
     <AuthenticatedLayout>
-        <div class="max-w-full md:max-w-[768px] mx-auto h-full overflow-auto">
+        <div
+            class="max-w-full md:max-w-[768px] mx-auto h-full overflow-auto scroll-smooth"
+        >
             <div class="px-4">
-                <div
-                    v-show="showNotification && success"
-                    class="my-2 py-2 px-3 font-medium text-sm bg-emerald-500 text-white"
+                <!-- Notificaciones con animaciones -->
+                <transition
+                    enter-active-class="transition ease-out duration-300"
+                    enter-from-class="transform opacity-0 translate-y-2"
+                    enter-to-class="transform opacity-100 translate-y-0"
+                    leave-active-class="transition ease-in duration-200"
+                    leave-from-class="transform opacity-100 translate-y-0"
+                    leave-to-class="transform opacity-0 translate-y-2"
                 >
-                    {{ success }}
-                </div>
-                <div
-                    v-if="errors.cover"
-                    class="my-2 py-2 px-3 font-medium text-sm bg-red-400 text-white"
-                >
-                    {{ errors.cover }}
-                </div>
+                    <div
+                        v-show="showNotification && success"
+                        class="my-2 py-2 px-3 font-medium text-sm bg-emerald-500 text-white rounded-lg shadow-lg"
+                    >
+                        {{ success }}
+                    </div>
+                </transition>
 
-                <div
-                    class="group relative bg-white dark:bg-slate-950 dark:text-gray-100"
+                <transition
+                    enter-active-class="transition ease-out duration-300"
+                    enter-from-class="transform opacity-0 scale-95"
+                    enter-to-class="transform opacity-100 scale-100"
+                    leave-active-class="transition ease-in duration-200"
+                    leave-from-class="transform opacity-100 scale-100"
+                    leave-to-class="transform opacity-0 scale-95"
                 >
-                    <img
-                        :src="
-                            coverImageSrc ||
-                            user.cover_url ||
-                            '/img/default_cover.jpg'
-                        "
-                        class="w-full h-[200px] object-cover"
-                    />
-                    <div class="absolute top-2 right-2">
-                        <button
-                             v-if="isMyProfile && !coverImageSrc"
-                            class="bg-gray-50 hover:bg-gray-100 text-gray-800 py-1 px-2 text-xs flex items-center opacity-0 group-hover:opacity-100"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="w-3 h-3 mr-2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                                />
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                                />
-                            </svg>
+                    <div
+                        v-if="errors.cover"
+                        class="my-2 py-2 px-3 font-medium text-sm bg-red-400 text-white rounded-lg animate-[shake_0.5s_ease-in-out]"
+                    >
+                        {{ errors.cover }}
+                    </div>
+                </transition>
 
-                            Update Cover Image
-                            <input
-                                type="file"
-                                class="absolute left-0 top-0 bottom-0 right-0 opacity-0"
-                                @change="onCoverChange"
-                            />
-                        </button>
+                <!-- Cover image con efecto parallax -->
+                <div
+                    class="group relative bg-white dark:bg-slate-950 dark:text-gray-100 rounded-xl overflow-hidden shadow-xl transition-all duration-500 hover:shadow-2xl"
+                >
+                    <div class="relative h-[200px] overflow-hidden">
+                        <img
+                            :src="
+                                coverImageSrc ||
+                                user.cover_url ||
+                                '/img/default_cover.jpg'
+                            "
+                            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
                         <div
-                            v-else
-                            v-if="isMyProfile && coverImageSrc"
-                            class="flex gap-2 bg-white p-2 opacity-0 group-hover:opacity-100"
+                            class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"
+                        ></div>
+                    </div>
+
+                    <!-- Botones de cover con animación -->
+                    <div class="absolute top-2 right-2 space-y-2">
+                        <transition
+                            enter-active-class="transition ease-out duration-300"
+                            enter-from-class="transform opacity-0 translate-y-2"
+                            enter-to-class="transform opacity-100 translate-y-0"
+                            leave-active-class="transition ease-in duration-200"
+                            leave-from-class="transform opacity-100 translate-y-0"
+                            leave-to-class="transform opacity-0 translate-y-2"
                         >
                             <button
-                                @click="resetCoverImage"
-                                class="bg-gray-50 hover:bg-gray-100 text-gray-800 py-1 px-2 text-xs flex items-center"
+                                v-if="isMyProfile && !coverImageSrc"
+                                class="bg-white/90 hover:bg-white text-gray-800 py-1 px-3 text-xs flex items-center rounded-full shadow-md transform transition-all duration-300 hover:scale-105"
                             >
-                                <XMarkIcon class="h-3 w-3 mr-2" />
+                                <CameraIcon class="w-4 h-4 mr-1" />
+                                Update Cover
+                                <input
+                                    type="file"
+                                    class="absolute left-0 top-0 bottom-0 right-0 opacity-0 cursor-pointer"
+                                    @change="onCoverChange"
+                                />
+                            </button>
+                        </transition>
+
+                        <transition-group
+                            tag="div"
+                            enter-active-class="transition ease-out duration-300"
+                            enter-from-class="transform opacity-0 translate-x-2"
+                            enter-to-class="transform opacity-100 translate-x-0"
+                            leave-active-class="transition ease-in duration-200"
+                            leave-from-class="transform opacity-100 translate-x-0"
+                            leave-to-class="transform opacity-0 translate-x-2"
+                            class="flex gap-2"
+                            v-if="isMyProfile && coverImageSrc"
+                        >
+                            <button
+                                key="cancel"
+                                @click="resetCoverImage"
+                                class="bg-white/90 hover:bg-red-500 hover:text-white text-gray-800 py-1 px-3 text-xs flex items-center rounded-full shadow-md transform transition-all duration-300 hover:scale-105"
+                            >
+                                <XMarkIcon class="h-3 w-3 mr-1" />
                                 Cancel
                             </button>
                             <button
+                                key="submit"
                                 @click="submitCoverImage"
-                                class="bg-gray-800 hover:bg-gray-900 text-gray-100 py-1 px-2 text-xs flex items-center"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white py-1 px-3 text-xs flex items-center rounded-full shadow-md transform transition-all duration-300 hover:scale-105"
                             >
-                                <CheckCircleIcon class="h-3 w-3 mr-2" />
+                                <CheckCircleIcon class="h-3 w-3 mr-1" />
                                 Submit
                             </button>
-                        </div>
+                        </transition-group>
                     </div>
 
+                    <!-- Avatar con animación 3D -->
                     <div class="flex">
                         <div
-                            class="flex items-center justify-center relative group/avatar -mt-[64px] ml-[48px] w-[128px] h-[128px] rounded-full"
+                            class="flex items-center justify-center relative group/avatar -mt-[64px] ml-[48px] w-[128px] h-[128px] rounded-full border-4 border-white dark:border-gray-800 shadow-xl"
                         >
-                            <img
-                                :src="
-                                    avatarImageSrc ||
-                                    user.avatar_url ||
-                                    '/img/default_avatar.webp'
-                                "
-                                class="w-full h-full object-cover rounded-full"
-                            />
-                            <button
-                                v-if="isMyProfile && !avatarImageSrc"
-                                class="absolute left-0 top-0 right-0 bottom-0 bg-black/50 text-gray-200 rounded-full opacity-0 flex items-center justify-center group-hover/avatar:opacity-100"
-                            >
-                                <CameraIcon class="w-8 h-8" />
-
-                                <input
-                                    type="file"
-                                    class="absolute left-0 top-0 bottom-0 right-0 opacity-0"
-                                    @change="onAvatarChange"
-                                />
-                            </button>
                             <div
-                                v-else
-                                v-if="isMyProfile && avatarImageSrc"
-                                class="absolute top-1 right-0 flex flex-col gap-2"
+                                class="relative w-full h-full rounded-full overflow-hidden transition-transform duration-500 group-hover/avatar:rotate-3"
                             >
+                                <img
+                                    :src="
+                                        avatarImageSrc ||
+                                        user.avatar_url ||
+                                        '/img/default_avatar.webp'
+                                    "
+                                    class="w-full h-full object-cover transition-transform duration-300 group-hover/avatar:scale-110"
+                                />
                                 <button
-                                    @click="resetAvatarImage"
-                                    class="w-7 h-7 flex items-center justify-center bg-red-500/80 text-white rounded-full"
+                                    v-if="isMyProfile && !avatarImageSrc"
+                                    class="absolute inset-0 bg-black/50 text-gray-200 rounded-full opacity-0 flex items-center justify-center group-hover/avatar:opacity-100 transition-opacity duration-300"
                                 >
-                                    <XMarkIcon class="h-5 w-5" />
-                                </button>
-                                <button
-                                    @click="submitAvatarImage"
-                                    class="w-7 h-7 flex items-center justify-center bg-emerald-500/80 text-white rounded-full"
-                                >
-                                    <CheckCircleIcon class="h-5 w-5" />
+                                    <CameraIcon
+                                        class="w-8 h-8 animate-[pulse_2s_infinite]"
+                                    />
+                                    <input
+                                        type="file"
+                                        class="absolute inset-0 opacity-0 cursor-pointer"
+                                        @change="onAvatarChange"
+                                    />
                                 </button>
                             </div>
+
+                            <transition-group
+                                tag="div"
+                                enter-active-class="transition ease-out duration-300"
+                                enter-from-class="transform opacity-0 scale-50"
+                                enter-to-class="transform opacity-100 scale-100"
+                                leave-active-class="transition ease-in duration-200"
+                                leave-from-class="transform opacity-100 scale-100"
+                                leave-to-class="transform opacity-0 scale-50"
+                                class="absolute top-0 right-0 flex flex-col gap-2"
+                                v-if="isMyProfile && avatarImageSrc"
+                            >
+                                <button
+                                    key="cancel-avatar"
+                                    @click="resetAvatarImage"
+                                    class="w-7 h-7 flex items-center justify-center bg-red-500/90 hover:bg-red-600 text-white rounded-full shadow-md transform transition-all duration-300 hover:scale-110"
+                                >
+                                    <XMarkIcon class="h-4 w-4" />
+                                </button>
+                                <button
+                                    key="submit-avatar"
+                                    @click="submitAvatarImage"
+                                    class="w-7 h-7 flex items-center justify-center bg-emerald-500/90 hover:bg-emerald-600 text-white rounded-full shadow-md transform transition-all duration-300 hover:scale-110"
+                                >
+                                    <CheckCircleIcon class="h-4 w-4" />
+                                </button>
+                            </transition-group>
                         </div>
+
                         <div
                             class="flex justify-between items-center flex-1 p-4"
                         >
-                            <div>
-                                <h2 class="font-bold text-lg">
+                            <div
+                                class="transform transition-all duration-300 hover:translate-x-1"
+                            >
+                                <h2
+                                    class="font-bold text-xl md:text-2xl text-gray-800 dark:text-white"
+                                >
                                     {{ user.name }}
                                 </h2>
-                                <p class="text-xs text-gray-500">
-                                    {{ followerCount }} follower(s)
+                                <p
+                                    class="text-sm text-gray-500 dark:text-gray-400"
+                                >
+                                    {{ followerCount }} follower{{
+                                        followerCount !== 1 ? "s" : ""
+                                    }}
                                 </p>
                             </div>
-                            <PrimaryButton
-                                v-if="isMyProfile"
-                                class="mt-4"
-                                @click="showCreateStory = true"
-                            >
-                                Crear historia
-                            </PrimaryButton>
-                            <CreateStory
-                                v-if="showCreateStory"
-                                @close="showCreateStory = false"
-                            />
 
-                            <div v-if="!isMyProfile">
+                            <div class="flex gap-2">
                                 <PrimaryButton
-                                    v-if="!isCurrentUserFollower"
-                                    @click="followUser"
+                                    v-if="isMyProfile"
+                                    @click="showCreateStory = true"
+                                    class="mt-4 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
                                 >
-                                    Follow User
+                                    Crear historia
                                 </PrimaryButton>
-                                <DangerButton v-else @click="followUser">
-                                    Unfollow User
-                                </DangerButton>
+
+                                <transition
+                                    enter-active-class="transition ease-out duration-300"
+                                    enter-from-class="transform opacity-0 scale-95"
+                                    enter-to-class="transform opacity-100 scale-100"
+                                    leave-active-class="transition ease-in duration-200"
+                                    leave-from-class="transform opacity-100 scale-100"
+                                    leave-to-class="transform opacity-0 scale-95"
+                                >
+                                    <CreateStory
+                                        v-if="showCreateStory"
+                                        @close="showCreateStory = false"
+                                    />
+                                </transition>
+
+                                <div v-if="!isMyProfile" class="mt-4">
+                                    <PrimaryButton
+                                        v-if="!isCurrentUserFollower"
+                                        @click="followUser"
+                                        class="transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                                    >
+                                        Follow
+                                    </PrimaryButton>
+                                    <DangerButton
+                                        v-else
+                                        @click="followUser"
+                                        class="transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                                    >
+                                        Unfollow
+                                    </DangerButton>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="border-t m-4 mt-0">
+
+            <!-- Tabs con animación -->
+            <div class="border-t dark:border-gray-700 mx-4 mt-0">
                 <TabGroup>
                     <TabList
-                        class="flex overflow-x-auto no-scrollbar whitespace-nowrap space-x-2 bg-white dark:bg-slate-950 dark:text-white px-2"
+                        class="flex overflow-x-auto no-scrollbar whitespace-nowrap space-x-2 bg-white dark:bg-slate-950 dark:text-white px-2 sticky top-0 z-10 shadow-sm"
                     >
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Posts" :selected="selected" />
+                            <TabItem
+                                text="Posts"
+                                :selected="selected"
+                                class="transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            />
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Followers" :selected="selected" />
+                            <TabItem
+                                text="Followers"
+                                :selected="selected"
+                                class="transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            />
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Followings" :selected="selected" />
+                            <TabItem
+                                text="Followings"
+                                :selected="selected"
+                                class="transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            />
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Photos" :selected="selected" />
+                            <TabItem
+                                text="Photos"
+                                :selected="selected"
+                                class="transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            />
                         </Tab>
                         <Tab
                             v-if="isMyProfile"
                             v-slot="{ selected }"
                             as="template"
                         >
-                            <TabItem text="My Profile" :selected="selected" />
+                            <TabItem
+                                text="My Profile"
+                                :selected="selected"
+                                class="transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                            />
                         </Tab>
                     </TabList>
 
                     <TabPanels class="mt-2">
-                        <TabPanel>
+                        <TabPanel
+                            class="transition-opacity duration-300 ease-in-out"
+                        >
                             <template v-if="posts">
-                                <CreatePost />
-                                <PostList :posts="posts.data" class="flex-1" />
+                                <CreatePost
+                                   
+                                />
+                                <PostList
+                                    :posts="posts.data"
+                                    class="flex-1 space-y-4"
+                                />
                             </template>
                             <div
                                 v-else
-                                class="py-8 text-center dark:text-gray-100"
+                                class="py-8 text-center dark:text-gray-100 animate-[pulse_2s_infinite]"
                             >
                                 You don't have permission to view these posts.
                             </div>
                         </TabPanel>
-                        <TabPanel>
-                            <div class="mb-3">
+
+                        <TabPanel
+                            class="transition-opacity duration-300 ease-in-out"
+                        >
+                            <div
+                                class="mb-3 animate-[slideInDown_0.3s_ease-in-out]"
+                            >
                                 <TextInput
                                     :model-value="searchFollowersKeyword"
                                     placeholder="Type to search"
@@ -339,21 +444,43 @@ function followUser() {
                             </div>
                             <div
                                 v-if="followers.length"
-                                class="grid grid-cols-2 gap-3"
+                                class="grid grid-cols-1 sm:grid-cols-2 gap-3"
                             >
-                                <UserListItem
-                                    v-for="user of followers"
-                                    :user="user"
-                                    :key="user.id"
-                                    class="shadow rounded-lg"
-                                />
+                                <transition-group
+                                    enter-active-class="transition ease-out duration-300"
+                                    enter-from-class="transform opacity-0 translate-y-4"
+                                    enter-to-class="transform opacity-100 translate-y-0"
+                                    leave-active-class="transition ease-in duration-200"
+                                    leave-from-class="transform opacity-100 translate-y-0"
+                                    leave-to-class="transform opacity-0 translate-y-4"
+                                    tag="div"
+                                    class="contents"
+                                >
+                                    <UserListItem
+                                        v-for="(user, index) of followers"
+                                        :user="user"
+                                        :key="user.id"
+                                        class="shadow rounded-lg hover:shadow-lg transition-shadow duration-300"
+                                        :style="`transition-delay: ${
+                                            index * 50
+                                        }ms`"
+                                    />
+                                </transition-group>
                             </div>
-                            <div v-else class="text-center py-8">
+                            <div
+                                v-else
+                                class="text-center py-8 animate-[fadeIn_1s_ease-in-out]"
+                            >
                                 User does not have followers.
                             </div>
                         </TabPanel>
-                        <TabPanel>
-                            <div class="mb-3">
+
+                        <TabPanel
+                            class="transition-opacity duration-300 ease-in-out"
+                        >
+                            <div
+                                class="mb-3 animate-[slideInDown_0.3s_ease-in-out]"
+                            >
                                 <TextInput
                                     :model-value="searchFollowingsKeyword"
                                     placeholder="Type to search"
@@ -362,23 +489,47 @@ function followUser() {
                             </div>
                             <div
                                 v-if="followings.length"
-                                class="grid grid-cols-2 gap-3"
+                                class="grid grid-cols-1 sm:grid-cols-2 gap-3"
                             >
-                                <UserListItem
-                                    v-for="user of followings"
-                                    :user="user"
-                                    :key="user.id"
-                                    class="shadow rounded-lg"
-                                />
+                                <transition-group
+                                    enter-active-class="transition ease-out duration-300"
+                                    enter-from-class="transform opacity-0 translate-y-4"
+                                    enter-to-class="transform opacity-100 translate-y-0"
+                                    leave-active-class="transition ease-in duration-200"
+                                    leave-from-class="transform opacity-100 translate-y-0"
+                                    leave-to-class="transform opacity-0 translate-y-4"
+                                    tag="div"
+                                    class="contents"
+                                >
+                                    <UserListItem
+                                        v-for="(user, index) of followings"
+                                        :user="user"
+                                        :key="user.id"
+                                        class="shadow rounded-lg hover:shadow-lg transition-shadow duration-300"
+                                        :style="`transition-delay: ${
+                                            index * 50
+                                        }ms`"
+                                    />
+                                </transition-group>
                             </div>
-                            <div v-else class="text-center py-8">
-                                The user is not following to anybody
+                            <div
+                                v-else
+                                class="text-center py-8 animate-[fadeIn_1s_ease-in-out]"
+                            >
+                                The user is not following anybody
                             </div>
                         </TabPanel>
-                        <TabPanel>
+
+                        <TabPanel
+                            class="transition-opacity duration-300 ease-in-out"
+                        >
                             <TabPhotos :photos="photos" />
                         </TabPanel>
-                        <TabPanel v-if="isMyProfile">
+
+                        <TabPanel
+                            v-if="isMyProfile"
+                            class="transition-opacity duration-300 ease-in-out"
+                        >
                             <Edit
                                 :must-verify-email="mustVerifyEmail"
                                 :status="status"
@@ -398,5 +549,70 @@ function followUser() {
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    20%,
+    60% {
+        transform: translateX(-5px);
+    }
+    40%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-\[fadeIn_0\.5s_ease-in-out\] {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-\[slideInDown_0\.3s_ease-in-out\] {
+    animation: slideInDown 0.3s ease-in-out;
+}
+
+.animate-\[shake_0\.5s_ease-in-out\] {
+    animation: shake 0.5s ease-in-out;
+}
+
+.animate-\[pulse_2s_infinite\] {
+    animation: pulse 2s infinite;
+}
+
+.animate-\[fadeIn_1s_ease-in-out\] {
+    animation: fadeIn 1s ease-in-out;
 }
 </style>

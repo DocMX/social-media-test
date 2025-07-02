@@ -124,7 +124,7 @@ scrollToBottom();
             </div>
         </template>
 
-        <div class="max-w-7xl mx-auto mt-6 flex gap-4 h-[70vh]">
+        <div class="max-w-7xl mx-auto flex gap-4 h-[calc(100vh-180px)]">
             <!-- Sidebar -->
             <div
                 v-show="!isMobileView || (isMobileView && !showChat)"
@@ -362,4 +362,5 @@ scrollToBottom();
 .animate-\[fadeIn_1s_ease-in-out_infinite\] {
     animation: fadeIn 1s ease-in-out infinite;
 }
+
 </style>
