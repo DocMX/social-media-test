@@ -8,6 +8,8 @@ import { Link, router, usePage } from "@inertiajs/vue3";
 import TextInput from "@/Components/TextInput.vue";
 import { MoonIcon } from "@heroicons/vue/24/solid";
 import NotificationBell from "@/Components/app/notifications/NotificationBell.vue";
+import { ChatBubbleLeftEllipsisIcon } from "@heroicons/vue/24/outline";
+
 
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || "");
@@ -73,6 +75,13 @@ function toggleDarkMode() {
                         </button>
                         <!-- Componente de Notificaciones -->
                         <NotificationBell />
+                        <Link
+                            :href="route('messages')"
+                            class="text-gray-700 dark:text-dark-text hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                            title="Messages"
+                        >
+                            <ChatBubbleLeftEllipsisIcon class="w-6 h-6" />
+                        </Link>
                     </div>
 
                     <div class="hidden sm:flex sm:items-center">

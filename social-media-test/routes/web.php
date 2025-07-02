@@ -3,6 +3,7 @@
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\StoryController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
@@ -124,6 +125,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/stories', [StoryController::class, 'store'])->name('stories.store');
     Route::post('/stories/view', [StoryController::class, 'markAsViewed'])->name('stories.view');
     Route::delete('/stories/{story}', [StoryController::class, 'destroy'])->name('stories.destroy');
+
+    //messages
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages');
+
+
 });
 
 require __DIR__ . '/auth.php';
