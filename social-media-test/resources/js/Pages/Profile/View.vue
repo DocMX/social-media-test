@@ -20,6 +20,7 @@ import TextInput from "@/Components/TextInput.vue";
 import PostAttachments from "@/Components/app/PostAttachments.vue";
 import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
 import CreateStory from "@/Components/app/stories/CreateStory.vue";
+import SendMessageModal from "@/Components/app/messages/SendMessageModal.vue";
 
 const imagesForm = useForm({
     avatar: null,
@@ -33,6 +34,7 @@ const searchFollowersKeyword = ref("");
 const searchFollowingsKeyword = ref("");
 const showCreateStory = ref(false);
 const authUser = usePage().props.auth.user;
+const showSendMessage = ref(false);
 
 const isMyProfile = computed(() => authUser && authUser.id === props.user.id);
 
@@ -356,6 +358,18 @@ function followUser() {
                                         Unfollow
                                     </DangerButton>
                                 </div>
+                                <div
+                                    v-if="!isMyProfile"
+                                    class="mt-4 flex gap-2"
+                                >
+                                    <PrimaryButton
+                                        @click="showSendMessage = true"
+                                        class="transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                                    >
+                                        Send Message
+                                    </PrimaryButton>
+                                    <!-- Aquí van tus botones Follow/Unfollow -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -414,7 +428,7 @@ function followUser() {
                             class="transition-opacity duration-300 ease-in-out"
                         >
                             <template v-if="posts">
-                                 <CreatePost v-if="isMyProfile" />
+                                <CreatePost v-if="isMyProfile" />
                                 <PostList
                                     :posts="posts.data"
                                     class="flex-1 space-y-4"
@@ -538,6 +552,12 @@ function followUser() {
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <SendMessageModal
+        :show="showSendMessage"
+        :receiverId="props.user.id"
+        @close="showSendMessage = false"
+    />
 </template>
 
 <style scoped>
