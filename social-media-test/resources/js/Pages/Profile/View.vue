@@ -414,9 +414,7 @@ function followUser() {
                             class="transition-opacity duration-300 ease-in-out"
                         >
                             <template v-if="posts">
-                                <CreatePost
-                                   
-                                />
+                                 <CreatePost v-if="isMyProfile" />
                                 <PostList
                                     :posts="posts.data"
                                     class="flex-1 space-y-4"

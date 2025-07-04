@@ -9,6 +9,7 @@ const props = defineProps({
   users: Array,
 });
 
+
 // Filtrar usuarios por nombre (o username si quieres)
 const filteredUsers = computed(() => {
   if (!searchKeyword.value.trim()) return props.users;

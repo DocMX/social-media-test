@@ -35,12 +35,14 @@ class InviteUsersRequest extends FormRequest
     {
         return [
             'email' => ['required', function ($attribute, $value, \Closure $fail) {
-                $this->user = User::query()->where('email', $value)
+                $this->user = User::query()
+                    ->where('email', $value)
                     ->orWhere('username', $value)
                     ->first();
 
                 if (!$this->user) {
                     $fail('User does not exist');
+                    return;  // Detener aquí para que no siga con el resto
                 }
 
                 $this->groupUser = GroupUser::where('user_id', $this->user->id)
@@ -51,6 +53,7 @@ class InviteUsersRequest extends FormRequest
                     $fail('User is already joined to the group');
                 }
             }]
+
         ];
     }
 }
