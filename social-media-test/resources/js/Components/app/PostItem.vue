@@ -87,7 +87,7 @@ function playLikeSound() {
 </script>
 
 <template>
-    <div class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border text-gray-800 dark:text-dark-text rounded-2xl p-5 mb-4 shadow-sm transition-colors duration-300">
+    <div class="bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border text-gray-800 dark:text-dark-text rounded-2xl p-4 mb-4 shadow-sm transition-colors duration-300 max-w-full sm:max-w-xl mx-auto">
         <!-- Cabecera -->
         <div class="flex items-center justify-between mb-3">
             <PostUserHeader :post="post" />
