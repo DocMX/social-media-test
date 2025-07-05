@@ -34,14 +34,14 @@ const filteredUsers = computed(() => {
         v-if="filteredUsers.length === 0"
         class="text-gray-400 text-center p-4"
       >
-        No se encontraron usuarios.
+        No users were found.
       </div>
       <div v-else>
         <UserListItem
           v-for="user in filteredUsers"
           :key="user.id"
           :user="user"
-          class="rounded-lg shadow-sm hover:shadow-md bg-white dark:bg-dark-card p-2 transition"
+          class="rounded-lg shadow-sm hover:shadow-md p-2 transition"
         />
       </div>
     </div>
@@ -49,5 +49,4 @@ const filteredUsers = computed(() => {
 </template>
 
 <style scoped>
-/* Puedes ajustar estilos si lo deseas aquí */
 </style>

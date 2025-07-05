@@ -19,7 +19,7 @@ defineProps({
             <Disclosure v-slot="{ open }">
                 <DisclosureButton class="w-full">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-bold">Mis Grupos</h2>
+                        <h2 class="text-xl font-bold">My groups</h2>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
