@@ -1,15 +1,8 @@
 <script setup>
-/* Importación de funciones reactivas desde Vue */
 import { ref, computed, onMounted } from "vue";
-
-/* Cliente Axios personalizado para peticiones HTTP */
 import axios from "@/axiosClient";
-
-/* Componentes internos */
 import StoriesModal from "./StoriesModal.vue";
 import CreateStory from "./CreateStory.vue";
-
-/* Hook de Inertia para acceder a props compartidos como el usuario autenticado */
 import { usePage } from "@inertiajs/vue3";
 
 /* Objeto donde se guardan las historias agrupadas por usuario */
@@ -45,15 +38,15 @@ const toggleMenu = (idx) => {
 /* Función para obtener historias desde el servidor */
 const fetchStories = async () => {
     try {
-        const response = await axios.get(route("stories")); // Ruta definida en web.php
+        const response = await axios.get(route("stories"));
         storiesByUser.value = response.data; // Guarda las historias
     } catch (e) {
-        console.error("Error al cargar historias:", e);
+        console.error("Error loading stories:", e);
     }
 };
 const viewStats = (story) => {
     alert(
-        `📊 Estadísticas de la historia\n\nVistas: ${
+        `Estadísticas de la historia\n\nVistas: ${
             story.views_count || 0
         }\nReacciones: ${story.reactions_count || 0}`
     );
@@ -102,15 +95,14 @@ const prevStory = () => {
     }
 };
 
-/* Elimina una historia si el usuario confirma la acción */
 const deleteStory = async (storyId) => {
-    if (!confirm("¿Estás segura de eliminar esta historia?")) return;
+    if (!confirm("Are you sure to delete this story?")) return;
 
     try {
         await axios.delete(route("stories.destroy", storyId)); // Elimina en backend
         fetchStories(); // Vuelve a cargar historias
     } catch (error) {
-        console.error("Error eliminando historia:", error);
+        console.error("Error deleting history:", error);
     }
 };
 
@@ -122,7 +114,6 @@ onMounted(() => {
 </script>
 
 <template>
-    <!-- Componente para crear historia (aparece en un modal si está activado) -->
     <CreateStory v-if="showCreateModal" @close="showCreateModal = false" />
     <!-- Contenedor principal de todas las historias -->
     <div
@@ -145,7 +136,7 @@ onMounted(() => {
             <div
                 class="absolute bottom-0 left-0 right-0 px-2 py-1 text-sm text-center text-gray-700 dark:text-white font-semibold bg-white dark:bg-slate-800"
             >
-                Crear historia
+                Create story
             </div>
             <div
                 class="absolute top-2 left-2 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center border-4 border-white dark:border-slate-800"
@@ -240,7 +231,7 @@ onMounted(() => {
             <div
                 class="absolute bottom-2 left-2 right-2 text-white text-xs font-semibold truncate"
             >
-                {{ userStories[0]?.user?.name || "Usuario" }}
+                {{ userStories[0]?.user?.name || "User" }}
             </div>
         </div>
     </div>
@@ -267,7 +258,7 @@ onMounted(() => {
 .story-ring.viewed {
     background: #d1d5db; /* gray-300 */
 }
-/* src/assets/css/custom-scroll.css */
+
 ::-webkit-scrollbar {
     height: 8px;
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
@@ -14,6 +15,7 @@ class NotificationController extends Controller
         $user = $request->user();
 
         $notifications = $user->notifications()
+        
             ->orderBy('created_at', 'desc')
             ->take(10)
             ->get()
@@ -39,13 +41,20 @@ class NotificationController extends Controller
                 ];
             });
 
-        return response()->json([
+        if ($request->wantsJson()) {
+            return response()->json([
+                'notifications' => $notifications,
+                'unread_count' => $user->unreadNotifications()->count(),
+            ]);
+        }
+
+        return Inertia::render('Notifications/Index', [
             'notifications' => $notifications,
             'unread_count' => $user->unreadNotifications()->count(),
         ]);
     }
 
- 
+
     public function markAsRead(Request $request, string $notificationId)
     {
         $notification = DatabaseNotification::findOrFail($notificationId);
@@ -59,7 +68,7 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
-  
+
     public function markAllAsRead(Request $request)
     {
         $request->user()->unreadNotifications->markAsRead();
@@ -77,5 +86,19 @@ class NotificationController extends Controller
         }
 
         return response()->json(['message' => 'El usuario no tiene notificaciones configuradas'], 500);
+    }
+
+    public function show($id)
+    {
+        $notification = auth()->user()->notifications()->findOrFail($id);
+
+        // Si aún no está leída, márcala
+        if (!$notification->read_at) {
+            $notification->markAsRead();
+        }
+
+        return Inertia::render('Notifications/Show', [
+            'notification' => $notification,
+        ]);
     }
 }

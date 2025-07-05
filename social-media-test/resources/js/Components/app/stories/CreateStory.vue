@@ -52,14 +52,14 @@ const uploadStory = async () => {
 
         window.dispatchEvent(
             new CustomEvent("toast", {
-                detail: { type: "success", message: "¡Historia publicada exitosamente!" },
+                detail: { type: "success", message: "Story successfully published!" },
             })
         );
 
         cancelUpload();
     } catch (error) {
-        console.error("Error al subir historia:", error);
-        alert("Error al subir historia.");
+        console.error("Error uploading history:", error);
+        alert("Error uploading history");
     } finally {
         uploading.value = false;
     }
@@ -72,7 +72,7 @@ const uploadStory = async () => {
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
             <div class="bg-white dark:bg-slate-900 rounded-lg shadow-lg w-full max-w-md p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold">Nueva Historia</h2>
+                    <h2 class="text-lg font-semibold">New Story</h2>
                     <button @click="cancelUpload" class="text-gray-500 hover:text-gray-800">&times;</button>
                 </div>
 
@@ -95,14 +95,14 @@ const uploadStory = async () => {
                             <source :src="previewUrl" type="video/mp4" />
                         </video>
                         <p class="text-xs text-gray-500 mt-1">
-                            Duración: {{ videoDuration }} segundos
+                            Duration: {{ videoDuration }} seconds
                         </p>
                     </div>
                 </div>
 
                 <textarea
                     v-model="caption"
-                    placeholder="Escribe una descripción..."
+                    placeholder="Write a description..."
                     class="w-full mt-2 p-2 border rounded dark:bg-slate-800 dark:text-white"
                 />
 
@@ -112,7 +112,7 @@ const uploadStory = async () => {
                         class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
                         v-if="previewUrl || caption"
                     >
-                        Cancelar
+                        Cancel
                     </button>
 
                     <button
@@ -120,7 +120,7 @@ const uploadStory = async () => {
                         :disabled="uploading || !image"
                         class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
                     >
-                        {{ uploading ? "Subiendo..." : "Publicar" }}
+                        {{ uploading ? "Uploading..." : "Publish" }}
                     </button>
                 </div>
             </div>

@@ -9,6 +9,9 @@ const props = defineProps({
     selectedUserIndex: Number,
     currentIndex: Number,
 });
+const isMobile = () => window.innerWidth <= 768;
+
+
 
 const emit = defineEmits(["close", "update:index", "next", "prev"]);
 const videoRef = ref(null);
@@ -82,6 +85,18 @@ watch(
     },
     { immediate: true }
 );
+
+const handleClick = async () => {
+    await emit("markAsRead", props.notification.id);
+
+    if (isMobile()) {
+        // Redirige a una página de notificación dedicada
+        router.visit(`/notifications/${props.notification.id}`);
+    } else {
+        // Mantén el comportamiento actual en escritorio
+        router.visit(config.value.getUrl(props.notification.data));
+    }
+};
 </script>
 
 <template>
@@ -207,8 +222,8 @@ watch(
             </p>
 
             <div class="flex justify-between mt-4 text-sm text-blue-500">
-                <button @click="emit('prev')">&laquo; Anterior</button>
-                <button @click="emit('next')">Siguiente &raquo;</button>
+                <button @click="emit('prev')">&laquo; Previous</button>
+                <button @click="emit('next')">Next &raquo;</button>
             </div>
         </div>
     </div>

@@ -17,7 +17,7 @@ const config = computed(() =>
 );
 
 const handleClick = async () => {
-    await emit("markAsRead", props.notification.id);
+    await emit("markAsRead", props.notification);
     router.visit(config.value.getUrl(props.notification.data));
 };
 </script>

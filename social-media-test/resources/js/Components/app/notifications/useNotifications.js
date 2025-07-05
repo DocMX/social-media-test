@@ -1,4 +1,5 @@
 import { ref, onMounted } from "vue";
+import { router } from "@inertiajs/vue3";
 import axios from "../../../axiosClient";
 
 const audio = new Audio("/sounds/notification.mp3");
@@ -27,7 +28,11 @@ export default function useNotifications() {
                 (id) => !oldUnreadIds.includes(id)
             );
 
-            notifications.value.splice(0, notifications.value.length, ...response.data.notifications);
+            notifications.value.splice(
+                0,
+                notifications.value.length,
+                ...response.data.notifications
+            );
 
             unreadCount.value = response.data.unread_count;
             if (hasNewUnread) {
@@ -43,13 +48,14 @@ export default function useNotifications() {
             isLoading.value = false;
         }
     };
-
+  
     const markAsRead = async (notificationId) => {
         try {
             await axios.post(
                 route("notifications.markAsRead", { id: notificationId })
             );
             await fetchNotifications();
+         
         } catch (error) {
             console.error("Error marking notification as read:", error);
         }

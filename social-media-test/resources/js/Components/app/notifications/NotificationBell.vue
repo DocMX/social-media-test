@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from "vue";
+import { router } from "@inertiajs/vue3";
 import { BellIcon } from "@heroicons/vue/24/outline";
 import useNotifications from "./useNotifications";
 import NotificationHeader from "./NotificationHeader.vue";
 import NotificationItem from "./NotificationItem.vue";
-
 
 const showDropdown = ref(false);
 const dropdownRef = ref(null);
@@ -22,14 +22,25 @@ const handleNotificationClick = async (notificationId) => {
     await markAsRead(notificationId);
 };
 
+const isMobileDevice = () => {
+    return window.innerWidth <= 768;
+};
 
+const handleBellClick = () => {
+    if (isMobileDevice()) {
+        router.visit(route("notifications"));
+
+    } else {
+        showDropdown.value = !showDropdown.value;
+    }
+};
 </script>
 
 <template>
     <div class="relative">
         <!-- Botón del icono de campana -->
         <button
-            @click="showDropdown = !showDropdown"
+            @click="handleBellClick"
             class="p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none relative"
             aria-label="Notificaciones"
         >
@@ -40,7 +51,7 @@ const handleNotificationClick = async (notificationId) => {
             />
         </button>
 
-        <!-- Dropdown de notificaciones -->
+        <!-- Dropdown de notificaciones (solo en escritorio) -->
         <div
             v-show="showDropdown"
             ref="dropdownRef"
