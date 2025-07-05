@@ -16,7 +16,7 @@ defineEmits(['markAllAsRead', 'clearNotifications']);
 <template>
     <div class="px-4 py-2 flex justify-between items-center bg-gray-50 dark:bg-gray-700">
         <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Notificaciones
+            Notifications
         </p>
         <div>
             <button
@@ -24,7 +24,7 @@ defineEmits(['markAllAsRead', 'clearNotifications']);
                 @click="$emit('markAllAsRead')"
                 class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
             >
-                Marcar todas como leídas
+                Mark all as read
             </button>
 
             <button
@@ -32,7 +32,7 @@ defineEmits(['markAllAsRead', 'clearNotifications']);
                 @click="$emit('clearNotifications')"
                 class="text-xs text-red-600 dark:text-red-400 hover:underline ml-2"
             >
-                Limpiar todo
+                Clean all
             </button>
         </div>
     </div>

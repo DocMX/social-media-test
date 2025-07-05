@@ -69,7 +69,7 @@ const handleNotificationClick = async (notificationId) => {
 
                 <div v-else class="px-4 py-6 text-center">
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        No hay notificaciones nuevas
+                        No new notifications
                     </p>
                 </div>
             </div>

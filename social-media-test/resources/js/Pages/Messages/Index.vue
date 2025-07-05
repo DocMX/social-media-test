@@ -165,7 +165,7 @@ scrollToBottom();
                     v-if="conversations.length === 0"
                     class="p-4 text-center text-gray-500 dark:text-gray-400 animate-pulse"
                 >
-                    No hay conversaciones.
+                    There are no conversations.
                 </div>
             </div>
 
@@ -209,7 +209,7 @@ scrollToBottom();
                     v-if="conversations.length === 0"
                     class="p-4 text-center text-gray-500 dark:text-gray-400 animate-pulse"
                 >
-                    No hay conversaciones.
+                   There are no conversations.
                 </div>
             </div>
 
@@ -300,7 +300,7 @@ scrollToBottom();
                             type="submit"
                             class="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition transform hover:scale-105 active:scale-95"
                         >
-                            Enviar
+                            Send
                         </button>
                     </form>
                 </template>
@@ -310,8 +310,7 @@ scrollToBottom();
                         class="flex items-center justify-center h-full text-gray-500 dark:text-gray-400 animate-pulse"
                     >
                         <span class="animate-[fadeIn_1s_ease-in-out_infinite]"
-                            >Selecciona una conversación para empezar a
-                            chatear.</span
+                            >Select a conversation to start chatting.</span
                         >
                     </div>
                 </template>

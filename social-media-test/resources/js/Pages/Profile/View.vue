@@ -325,7 +325,7 @@ function followUser() {
                                     @click="showCreateStory = true"
                                     class="mt-4 transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
                                 >
-                                    Crear historia
+                                    New Story
                                 </PrimaryButton>
 
                                 <transition

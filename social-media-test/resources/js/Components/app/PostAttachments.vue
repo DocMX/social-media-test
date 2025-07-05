@@ -32,7 +32,7 @@ const toggleMute = (event) => {
                 v-if="ind === 3 && attachments.length > 4"
                 class="absolute left-0 top-0 right-0 bottom-0 z-10 bg-black/60 text-white flex items-center justify-center text-2xl"
             >
-                +{{ attachments.length - 4 }} más
+                +{{ attachments.length - 4 }} more
             </div>
 
             <!-- Botón de descarga -->

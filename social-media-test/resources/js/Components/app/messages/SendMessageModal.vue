@@ -65,13 +65,13 @@ const send = () => {
                 <div v-if="!props.receiverId">
                     <label
                         class="block text-sm text-gray-600 dark:text-gray-300"
-                        >Destinatario</label
+                        >Recipient</label
                     >
                     <select
                         v-model="form.receiver_id"
                         class="w-full mt-1 px-3 py-2 border rounded dark:bg-gray-900 dark:border-gray-700 dark:text-white"
                     >
-                        <option disabled value="">Selecciona un usuario</option>
+                        <option disabled value="">Select User</option>
                         <option
                             v-for="user in users"
                             :key="user.id"
@@ -114,7 +114,7 @@ const send = () => {
                         @click="$emit('close')"
                         class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white rounded"
                     >
-                        Cancelar
+                        Cancel
                     </button>
                     <button
                         type="submit"
