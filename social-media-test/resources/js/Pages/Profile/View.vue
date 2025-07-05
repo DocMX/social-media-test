@@ -152,21 +152,14 @@ function followUser() {
                     </div>
                 </transition>
 
-                <transition
-                    enter-active-class="transition ease-out duration-300"
-                    enter-from-class="transform opacity-0 scale-95"
-                    enter-to-class="transform opacity-100 scale-100"
-                    leave-active-class="transition ease-in duration-200"
-                    leave-from-class="transform opacity-100 scale-100"
-                    leave-to-class="transform opacity-0 scale-95"
-                >
+            
                     <div
                         v-if="errors.cover"
                         class="my-2 py-2 px-3 font-medium text-sm bg-red-400 text-white rounded-lg animate-[shake_0.5s_ease-in-out]"
                     >
                         {{ errors.cover }}
                     </div>
-                </transition>
+            
 
                 <!-- Cover image con efecto parallax -->
                 <div
@@ -188,14 +181,7 @@ function followUser() {
 
                     <!-- Botones de cover con animación -->
                     <div class="absolute top-2 right-2 space-y-2">
-                        <transition
-                            enter-active-class="transition ease-out duration-300"
-                            enter-from-class="transform opacity-0 translate-y-2"
-                            enter-to-class="transform opacity-100 translate-y-0"
-                            leave-active-class="transition ease-in duration-200"
-                            leave-from-class="transform opacity-100 translate-y-0"
-                            leave-to-class="transform opacity-0 translate-y-2"
-                        >
+                      
                             <button
                                 v-if="isMyProfile && !coverImageSrc"
                                 class="bg-white/90 hover:bg-white text-gray-800 py-1 px-3 text-xs flex items-center rounded-full shadow-md transform transition-all duration-300 hover:scale-105"
@@ -208,7 +194,7 @@ function followUser() {
                                     @change="onCoverChange"
                                 />
                             </button>
-                        </transition>
+                        
 
                         <transition-group
                             tag="div"
