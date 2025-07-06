@@ -40,7 +40,7 @@ function toggleDarkMode() {
 
 <template>
     <div
-        class="h-full overflow-hidden flex flex-col bg-gray-100 dark:bg-dark-bg"
+        class="h-full overflow-hidden flex flex-col bg-gray-100 dark:bg-dark-bg h-screen"
     >
         <nav
             class="bg-white dark:bg-dark-card border-b border-gray-100 dark:border-dark-border"
