@@ -24,14 +24,13 @@ const props = defineProps({
     posts: Array,
 });
 
-// Sincroniza los posts cuando cambian en page.props
 watch(
     () => props.posts,
     () => {
         if (props.posts) {
             allPosts.value = {
                 data: props.posts,
-                next: page.props.posts?.links?.next || null, // conservamos esto por si hay scroll infinito
+                next: page.props.posts?.links?.next || null, 
             };
         }
     },
@@ -70,7 +69,7 @@ function loadMore() {
     if (!allPosts.value.next) {
         return;
     }
-
+    console.log("Cargando siguiente página:", allPosts.value.next);
     axiosClient.get(allPosts.value.next).then(({ data }) => {
         if (Array.isArray(data.data)) {
             allPosts.value.data = [...allPosts.value.data, ...data.data];
