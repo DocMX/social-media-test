@@ -23,7 +23,6 @@ defineProps({
         <div
             class="grid lg:grid-cols-12 gap-3 p-4 h-screen bg-gray-100 dark:bg-dark-bg text-gray-800 dark:text-dark-text overflow-hidden"
         >
-            <!-- Lista de grupos -->
             <div class="lg:col-span-3 lg:order-1 h-full overflow-hidden">
                 <div
                     class="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto pr-2"

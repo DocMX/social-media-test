@@ -135,7 +135,6 @@ function followUser() {
             class="max-w-full md:max-w-[768px] mx-auto h-full overflow-auto scroll-smooth"
         >
             <div class="px-4">
-                <!-- Notificaciones con animaciones -->
                 <transition
                     enter-active-class="transition ease-out duration-300"
                     enter-from-class="transform opacity-0 translate-y-2"
@@ -159,9 +158,6 @@ function followUser() {
                     >
                         {{ errors.cover }}
                     </div>
-            
-
-                <!-- Cover image con efecto parallax -->
                 <div
                     class="group relative bg-white dark:bg-slate-950 dark:text-gray-100 rounded-xl overflow-hidden shadow-xl transition-all duration-500 hover:shadow-2xl"
                 >
@@ -179,7 +175,7 @@ function followUser() {
                         ></div>
                     </div>
 
-                    <!-- Botones de cover con animación -->
+
                     <div class="absolute top-2 right-2 space-y-2">
                       
                             <button
@@ -354,7 +350,7 @@ function followUser() {
                                     >
                                         Send Message
                                     </PrimaryButton>
-                                    <!-- Aquí van tus botones Follow/Unfollow -->
+                                    
                                 </div>
                             </div>
                         </div>

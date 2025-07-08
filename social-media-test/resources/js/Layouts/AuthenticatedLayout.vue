@@ -73,7 +73,6 @@ function toggleDarkMode() {
                         >
                             <MoonIcon class="w-5 h-5" />
                         </button>
-                        <!-- Componente de Notificaciones -->
                         <NotificationBell />
                         <Link
                             :href="route('messages')"

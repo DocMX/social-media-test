@@ -12,7 +12,7 @@ const props = defineProps({
 
 const config = computed(() => {
   const data = props.notification?.data ?? {};
-  const conf = getNotificationConfig(data.type); // <- aquí está la clave
+  const conf = getNotificationConfig(data.type);
   return {
     icon: conf?.icon || 'div',
     iconClass: conf?.iconClass || '',
@@ -31,7 +31,6 @@ const config = computed(() => {
     <div class="max-w-xl mx-auto p-4">
       <div class="block px-4 py-3 bg-white dark:bg-gray-800 rounded-lg shadow">
         <div class="flex items-start">
-          <!-- Icono -->
           <div class="flex-shrink-0 pt-0.5 mr-3">
             <component
               :is="config.icon"
@@ -39,17 +38,13 @@ const config = computed(() => {
               :class="config.iconClass"
             />
           </div>
-
-          <!-- Contenido -->
           <div class="flex-1 min-w-0">
             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
               {{ config.getTitle(notification.data) }}
             </h3>
             <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
               {{ config.getMessage(notification.data) }}
-            </p>
-
-            <!-- Información adicional -->
+            </p>  
             <div v-if="notification.data?.type === 'comment_reply'" class="mt-1 text-xs text-gray-400">
               En respuesta a tu comentario
             </div>
